@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Select, TextField, Typography } from '@material-ui/core';
+import { Button, MenuItem, Select, TextField, Typography } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Modal from '../../molecules/Modal';
 import { RootState } from '../../../reducers';
@@ -91,9 +91,9 @@ const App: React.FC<PropsType> = (props: PropsType) => {
             <TextField defaultValue={props.filter.level > 0 ? props.filter.level : ''} inputRef={levelRef} fullWidth={true} />
             <div className={classes.minilabel}>スイングレベルの比較条件</div>
             <Select defaultValue={props.filter.levelCond} inputRef={levelCondRef} fullWidth={true}>
-              <option value={0}>イコール</option>
-              <option value={1}>以上</option>
-              <option value={2}>以下</option>
+              <MenuItem value={0}>イコール</MenuItem>
+              <MenuItem value={1}>以上</MenuItem>
+              <MenuItem value={2}>以下</MenuItem>
             </Select>
           </div>
 
@@ -104,11 +104,11 @@ const App: React.FC<PropsType> = (props: PropsType) => {
           <div>
             <div className={classes.label}>スキル効果</div>
             <Select defaultValue={props.filter.skillEffectType} inputRef={skillEffectTypeRef} placeholder={'スキル効果種別'} fullWidth={true}>
-              <option value={0}>-</option>
-              <option value={1}>スキル無し</option>
-              <option value={2}>レベル</option>
-              <option value={3}>ドレシアゲージがたまりやすい</option>
-              <option value={4}>ドレシアチャンスボーナスアップ</option>
+              <MenuItem value={0}>-</MenuItem>
+              <MenuItem value={1}>スキル無し</MenuItem>
+              <MenuItem value={2}>レベル</MenuItem>
+              <MenuItem value={3}>ドレシアゲージがたまりやすい</MenuItem>
+              <MenuItem value={4}>ドレシアチャンスボーナスアップ</MenuItem>
             </Select>
             <div className={classes.minilabel}>スキル効果量</div>
             <TextField defaultValue={props.filter.skillEffectValue > 0 ? props.filter.skillEffectValue : ''} inputRef={skillEffectValueRef} fullWidth={true} />

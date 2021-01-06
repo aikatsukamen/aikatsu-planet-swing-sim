@@ -1,4 +1,4 @@
-import { Button, Paper, Select } from '@material-ui/core';
+import { Button, MenuItem, Paper, Select } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -270,9 +270,9 @@ const App: React.FC<PropsType> = (props: PropsType) => {
           </div>
           <div>
             <Select variant={'outlined'} onChange={changeOp} value={selectCard} fullWidth={true}>
-              <option value={'-'}> スイングを選んでね！ </option>
+              <MenuItem value={'-'}> スイングを選んでね！ </MenuItem>
               {cardList.map((card, index) => {
-                return <option key={index} value={card.dressId}>{`${card.cardId} ${card.rarity} ${card.cardName} Lv.${card.level}`}</option>;
+                return <MenuItem key={index} value={card.dressId}>{`${card.cardId} ${card.rarity} ${card.cardName} Lv.${card.level}`}</MenuItem>;
               })}
             </Select>
           </div>
