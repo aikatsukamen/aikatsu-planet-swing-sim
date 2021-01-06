@@ -1,0 +1,9 @@
+{
+  "api": {
+    "cardInfoBase": "https://aikatsukamen.github.io/aikatsu-planet-cardinfo"
+  },
+  "cardInfo": {
+    "promoVersion": [520901],
+    "versionBase": 520000
+  }
+}
