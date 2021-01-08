@@ -1,4 +1,4 @@
-import { Button, MenuItem, Paper, Select } from '@material-ui/core';
+import { Button, IconButton, MenuItem, Paper, Select, Tooltip } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -11,6 +11,10 @@ import Dialog from '../../organisms/Dialog';
 import CardSlot from '../../molecules/CardSlot';
 import CardFilter from '../../organisms/CardFilter';
 import { CardInfoList } from '../../../types/api';
+import CasinoIcon from '@material-ui/icons/Casino';
+import FilterListIcon from '@material-ui/icons/FilterList';
+import ShareIcon from '@material-ui/icons/Share';
+import StarRateIcon from '@material-ui/icons/StarRate';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -275,23 +279,30 @@ const App: React.FC<PropsType> = (props: PropsType) => {
 
         <div className={classes.footer}>
           <div>
-            <Button className={classes.button} style={{ marginRight: '1em' }} size={'small'} variant={'contained'} color={'default'} onClick={dispSearchDialog}>
-              絞り込み
-            </Button>
+            <Tooltip title="ランダム編成">
+              <IconButton className={classes.button} color={'default'} onClick={randomSlot}>
+                <CasinoIcon />
+              </IconButton>
+            </Tooltip>
 
-            <Button className={classes.button} style={{ marginRight: '1em' }} size={'small'} variant={'contained'} color={'default'} onClick={randomSlot}>
-              ランダム
-            </Button>
+            <Tooltip title="お気に入り">
+              <IconButton className={classes.button} color={'default'} onClick={favoriteCards}>
+                <StarRateIcon />
+              </IconButton>
+            </Tooltip>
 
-            <Button className={classes.button} size={'small'} variant={'contained'} color={'default'} onClick={favoriteCards}>
-              お気に入り
-            </Button>
-
-            <Button className={classes.button} size={'small'} variant={'contained'} color={'default'} onClick={shareCards}>
-              Share
-            </Button>
+            <Tooltip title="編成をShare">
+              <IconButton className={classes.button} color={'default'} onClick={shareCards}>
+                <ShareIcon />
+              </IconButton>
+            </Tooltip>
           </div>
-          <div>
+          <div style={{ display: 'flex', height: '2em' }}>
+            <Tooltip title="リストの絞り込み">
+              <IconButton className={classes.button} color={'default'} onClick={dispSearchDialog}>
+                <FilterListIcon />
+              </IconButton>
+            </Tooltip>
             <Select variant={'outlined'} onChange={changeOp} value={selectCard} fullWidth={true}>
               <MenuItem value={'-'}> スイングを選んでね！ </MenuItem>
               {cardList.map((card, index) => {
