@@ -56,12 +56,15 @@ type PropsType = ComponentProps & ActionProps;
 const App: React.FC<PropsType> = (props: PropsType) => {
   const classes = useStyles({});
 
-  const [ally, setAlly] = React.useState<(string | null)[]>([null, null, null]);
-  const [enemy, setEnemy] = React.useState<(string | null)[]>([null, null, null]);
+  const [ally, setAlly] = React.useState<(string | null)[]>(props.allyCardList);
+  const [enemy, setEnemy] = React.useState<(string | null)[]>(props.enemyCardList);
   // const [ally, setAlly] = React.useState<(string | null)[]>(['165599', '163835', '163817']);
   // const [enemy, setEnemy] = React.useState<(string | null)[]>(['163799', '163799', '163799']);
   const [cardList, setCardList] = React.useState<CardInfoList>([]);
   const [filterOpen, setFilterOpen] = React.useState(false);
+
+  React.useEffect(() => setAlly(props.allyCardList), [props.allyCardList.join()]);
+  React.useEffect(() => setEnemy(props.enemyCardList), [props.enemyCardList.join()]);
 
   React.useEffect(() => {
     let newList: typeof props.cardList = props.cardList;
@@ -132,6 +135,7 @@ const App: React.FC<PropsType> = (props: PropsType) => {
     }
 
     setCardList(newList);
+    setSelectCard('-');
   }, [props.cardList.length, Object.values(props.filter).join()]);
 
   const [cardStatus, setCardStatus] = React.useState<{
@@ -204,6 +208,17 @@ const App: React.FC<PropsType> = (props: PropsType) => {
     setEnemy([random4.dressId, random5.dressId, random6.dressId]);
   };
 
+  const shareCards = () => {
+    props.shareCards({
+      ally,
+      enemy,
+    });
+  };
+
+  const favoriteCards = () => {
+    window.alert('マダナイヨ');
+  };
+
   React.useEffect(() => {
     console.log(`${ally.join()}, ${enemy.join()}`);
 
@@ -222,11 +237,11 @@ const App: React.FC<PropsType> = (props: PropsType) => {
     console.log(`${type}  ${position}`);
     if (type === 'ally') {
       const temp = [...ally];
-      temp[position] = selectCard;
+      temp[position] = selectCard === '-' ? null : selectCard;
       setAlly(temp);
     } else {
       const temp = [...enemy];
-      temp[position] = selectCard;
+      temp[position] = selectCard === '-' ? null : selectCard;
       setEnemy(temp);
     }
   };
@@ -260,12 +275,20 @@ const App: React.FC<PropsType> = (props: PropsType) => {
 
         <div className={classes.footer}>
           <div>
-            <Button className={classes.button} style={{ marginRight: 40 }} size={'small'} variant={'contained'} color={'default'} onClick={dispSearchDialog}>
-              スイング絞り込み
+            <Button className={classes.button} style={{ marginRight: '1em' }} size={'small'} variant={'contained'} color={'default'} onClick={dispSearchDialog}>
+              絞り込み
             </Button>
 
-            <Button className={classes.button} size={'small'} variant={'contained'} color={'default'} onClick={randomSlot}>
-              ランダム編成
+            <Button className={classes.button} style={{ marginRight: '1em' }} size={'small'} variant={'contained'} color={'default'} onClick={randomSlot}>
+              ランダム
+            </Button>
+
+            <Button className={classes.button} size={'small'} variant={'contained'} color={'default'} onClick={favoriteCards}>
+              お気に入り
+            </Button>
+
+            <Button className={classes.button} size={'small'} variant={'contained'} color={'default'} onClick={shareCards}>
+              Share
             </Button>
           </div>
           <div>
@@ -318,6 +341,8 @@ const mapStateToProps = (state: RootState) => {
     dialog: state.reducer.dialog,
     cardList: state.reducer.cardInfo,
     filter: state.reducer.filter,
+    allyCardList: state.reducer.allyCardList,
+    enemyCardList: state.reducer.enemyCardList,
   };
 };
 
@@ -325,6 +350,7 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = {
   closeNotify: actions.closeNotify,
   closeModal: actions.closeDialog,
+  shareCards: actions.shareCards,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

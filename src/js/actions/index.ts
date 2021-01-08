@@ -79,3 +79,7 @@ export const updateFilter = createAction('UPDATE_FILTER', (action) => {
 export const resetFilter = createAction('REST_FILTER', (action) => {
   return () => action();
 });
+
+export const shareCards = createAction('SHARE_CARDS', (action) => {
+  return (args: { ally: (string | null)[]; enemy: (string | null)[] }) => action(args);
+});

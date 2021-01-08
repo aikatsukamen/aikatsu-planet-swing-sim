@@ -11,12 +11,15 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       height: '90vh',
       width: '90vw',
+      maxWidth: 600,
+      maxHeight: 500,
       padding: 5,
       backgroundColor: 'white',
       borderRadius: 10,
     },
     content: {
       height: '80vh',
+      maxHeight: 'calc(100% - 50px)',
       overflowY: 'scroll',
       overflowX: 'hidden',
     },
@@ -91,9 +94,9 @@ const App: React.FC<PropsType> = (props: PropsType) => {
             <TextField defaultValue={props.filter.level > 0 ? props.filter.level : ''} inputRef={levelRef} fullWidth={true} />
             <div className={classes.minilabel}>スイングレベルの比較条件</div>
             <Select defaultValue={props.filter.levelCond} inputRef={levelCondRef} fullWidth={true}>
-              <MenuItem value={0}>イコール</MenuItem>
-              <MenuItem value={1}>以上</MenuItem>
-              <MenuItem value={2}>以下</MenuItem>
+              <MenuItem value={'0'}>イコール</MenuItem>
+              <MenuItem value={'1'}>以上</MenuItem>
+              <MenuItem value={'2'}>以下</MenuItem>
             </Select>
           </div>
 
@@ -104,11 +107,11 @@ const App: React.FC<PropsType> = (props: PropsType) => {
           <div>
             <div className={classes.label}>スキル効果</div>
             <Select defaultValue={props.filter.skillEffectType} inputRef={skillEffectTypeRef} placeholder={'スキル効果種別'} fullWidth={true}>
-              <MenuItem value={0}>-</MenuItem>
-              <MenuItem value={1}>スキル無し</MenuItem>
-              <MenuItem value={2}>レベル</MenuItem>
-              <MenuItem value={3}>ドレシアゲージがたまりやすい</MenuItem>
-              <MenuItem value={4}>ドレシアチャンスボーナスアップ</MenuItem>
+              <MenuItem value={'0'}>-</MenuItem>
+              <MenuItem value={'1'}>スキル無し</MenuItem>
+              <MenuItem value={'2'}>レベル</MenuItem>
+              <MenuItem value={'3'}>ドレシアゲージがたまりやすい</MenuItem>
+              <MenuItem value={'4'}>ドレシアチャンスボーナスアップ</MenuItem>
             </Select>
             <div className={classes.minilabel}>スキル効果量</div>
             <TextField defaultValue={props.filter.skillEffectValue > 0 ? props.filter.skillEffectValue : ''} inputRef={skillEffectValueRef} fullWidth={true} />

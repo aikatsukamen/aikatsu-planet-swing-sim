@@ -55,9 +55,9 @@ export type GlobalState = {
     skillEffectValue: number;
   };
   /** 相手のスイング */
-  enemyCardList: (CardInfo | null)[];
+  enemyCardList: (string | null)[];
   /** 味方のスイング */
-  allyCardList: (CardInfo | null)[];
+  allyCardList: (string | null)[];
   /** お気に入りリスト */
   favoriteList: {
     id: number;
@@ -179,18 +179,16 @@ const reducer = (state: GlobalState = initial, action: Action): GlobalState => {
       };
     }
     case getType(actions.updateAllyCard): {
-      const allyCardList = state.allyCardList;
-      const card = state.cardInfo.filter((card) => card.dressId === action.payload.dressId)[0];
-      allyCardList[action.payload.index] = card;
+      const allyCardList = [...state.allyCardList];
+      allyCardList[action.payload.index] = action.payload.dressId;
       return {
         ...state,
         allyCardList,
       };
     }
     case getType(actions.updateEnemyCard): {
-      const enemyCardList = state.enemyCardList;
-      const card = state.cardInfo.filter((card) => card.dressId === action.payload.dressId)[0];
-      enemyCardList[action.payload.index] = card;
+      const enemyCardList = [...state.enemyCardList];
+      enemyCardList[action.payload.index] = action.payload.dressId;
       return {
         ...state,
         enemyCardList,
