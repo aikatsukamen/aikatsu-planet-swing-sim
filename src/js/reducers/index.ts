@@ -104,8 +104,8 @@ const initial: GlobalState = {
     skillEffectType: 0,
     skillEffectValue: 0,
   },
-  allyCardList: [null, null, null],
-  enemyCardList: [null, null, null],
+  allyCardList: [],
+  enemyCardList: [],
   favoriteList: [],
 };
 

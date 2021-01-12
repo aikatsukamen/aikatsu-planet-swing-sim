@@ -48,11 +48,15 @@ const theme: Partial<Theme> = {
   },
 };
 
-type ComponentProps = DialogState;
+type ComponentProps = {
+  styleOverride?: {
+    maxWidth: number;
+  };
+} & DialogState;
 type ActionProps = typeof mapDispatchToProps;
 
 type PropsType = ComponentProps & ActionProps;
-const App: React.SFC<PropsType> = (props: PropsType) => {
+const App: React.FC<PropsType> = (props: PropsType) => {
   const classes = useStyles({});
 
   const label = {
@@ -104,7 +108,7 @@ const App: React.SFC<PropsType> = (props: PropsType) => {
 
   return (
     <Modal open={props.show}>
-      <div className={rootClass}>
+      <div className={rootClass} style={props.styleOverride}>
         {/* メッセージ */}
         <div className={classes.contents}>
           <div>{props.message}</div>
@@ -118,7 +122,7 @@ const App: React.SFC<PropsType> = (props: PropsType) => {
 };
 
 // state
-const mapStateToProps = (state: RootState): ComponentProps => {
+const mapStateToProps = (state: RootState) => {
   return {
     ...state.reducer.dialog,
   };

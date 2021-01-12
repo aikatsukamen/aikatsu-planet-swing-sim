@@ -9,8 +9,12 @@ import { CardInfoList } from '../types/api';
 export default function* rootSaga() {
   yield call(fetchConfig);
   yield call(fetchCardInfo);
+  yield call(loadStorage);
   yield call(checkQuery);
-  yield takeEvery(actions.shareCards, shareCards);
+  yield takeEvery(actions.shareCardsSaga, shareCards);
+  yield takeEvery(actions.addFavoriteSaga, addFavorite);
+  yield takeEvery(actions.updateFavoriteSaga, updateFavorite);
+  yield takeEvery(actions.deleteFavoriteSaga, deleteFavorite);
 }
 
 function* errorHandler(error: any) {
@@ -114,7 +118,7 @@ function* checkQuery() {
   }
 }
 
-function* shareCards(action: ReturnType<typeof actions.shareCards>) {
+function* shareCards(action: ReturnType<typeof actions.shareCardsSaga>) {
   if (navigator.clipboard) {
     const baseUrl = window.location.href.replace(/\?.*$/, '');
     const ally = action.payload.ally.join();
@@ -125,4 +129,38 @@ function* shareCards(action: ReturnType<typeof actions.shareCards>) {
   } else {
     yield put(actions.changeNotify(true, 'warning', 'このブラウザでは対応してないよ！', true));
   }
+}
+
+const LOCALSTORAGE_FAVORITE = 'favorite';
+
+/** ローカルストレージからデータ読み込み */
+function* loadStorage() {
+  // お気に入り
+  const favStr = window.localStorage.getItem(LOCALSTORAGE_FAVORITE);
+  if (favStr) {
+    const fav = JSON.parse(favStr);
+    if (Array.isArray(fav) && fav.length > 0) {
+      for (const f of fav) {
+        yield put(actions.addFavorite(f));
+      }
+    }
+  }
+}
+
+function* addFavorite(action: ReturnType<typeof actions.addFavoriteSaga>) {
+  yield put(actions.addFavorite(action.payload));
+
+  const state: RootState = yield select();
+  window.localStorage.setItem(LOCALSTORAGE_FAVORITE, JSON.stringify(state.reducer.favoriteList));
+}
+
+function* updateFavorite(action: ReturnType<typeof actions.updateFavoriteSaga>) {
+  //
+}
+
+function* deleteFavorite(action: ReturnType<typeof actions.deleteFavoriteSaga>) {
+  const ret = yield call(confirmSaga, 'お気に入りから削除してもよろしいですか？', 'info');
+  if (!ret) return;
+
+  yield put(actions.deleteFavorite(action.payload));
 }

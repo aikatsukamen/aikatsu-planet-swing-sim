@@ -33,12 +33,14 @@ const App: React.FC<PropsType> = (props: PropsType) => {
 
   return (
     <Card className={classes.root}>
-      <CardMedia style={{ height: 'calc(100% - 132px)' }} image={props.card?.imageUrl1 ?? './images/empty_swing.png'} />
-      <div style={{ height: 100 }}>
+      <CardMedia style={{ height: 'calc(100% - 5em - 32px)' }} image={props.card?.imageUrl1 ?? './images/empty_swing.png'} />
+      <div style={{ height: '5em' }}>
+        {/* ID、カード名 */}
         <Typography variant="body2" color="textSecondary" component="p">
           {props.card?.cardId ?? ''} {props.card?.rarity ?? ''} {props.card?.cardName ?? ''}
         </Typography>
-        <Typography style={{ fontSize: 'xx-small' }} variant="caption" color="textSecondary" component="p">
+        {/* スキルテキスト */}
+        <Typography style={{ fontSize: 'xx-small', lineHeight: 1.1 }} variant="caption" color="textSecondary" component="p">
           {props.card?.skill.text.full ?? ''}
         </Typography>
       </div>

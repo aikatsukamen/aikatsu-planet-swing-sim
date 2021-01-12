@@ -49,16 +49,28 @@ export const updateCardInfo = createAction('UPDATE_CARD_INFO', (action) => {
   return (args: CardInfoList) => action(args);
 });
 
+/** お気に入り登録(画面クリック) */
+export const addFavoriteSaga = createAction('ADD_FAVORITE_SAGA', (action) => {
+  return (args: Omit<RootState['reducer']['favoriteList'][0], 'id'>) => action(args);
+});
 /** お気に入り登録 */
 export const addFavorite = createAction('ADD_FAVORITE', (action) => {
   return (args: Omit<RootState['reducer']['favoriteList'][0], 'id'>) => action(args);
 });
 
-/** お気に入り削除 */
+/** お気に入り更新 */
+export const updateFavoriteSaga = createAction('UPDATE_FAVORITE_SAGA', (action) => {
+  return (args: RootState['reducer']['favoriteList'][0]) => action(args);
+});
+/** お気に入り更新 */
 export const updateFavorite = createAction('UPDATE_FAVORITE', (action) => {
   return (args: RootState['reducer']['favoriteList'][0]) => action(args);
 });
 
+/** お気に入り削除 */
+export const deleteFavoriteSaga = createAction('DELETE_FAVORITE_SAGA', (action) => {
+  return (args: number) => action(args);
+});
 /** お気に入り削除 */
 export const deleteFavorite = createAction('DELETE_FAVORITE', (action) => {
   return (args: number) => action(args);
@@ -80,6 +92,7 @@ export const resetFilter = createAction('REST_FILTER', (action) => {
   return () => action();
 });
 
-export const shareCards = createAction('SHARE_CARDS', (action) => {
+/** 編成共有ボタン */
+export const shareCardsSaga = createAction('SHARE_CARDS', (action) => {
   return (args: { ally: (string | null)[]; enemy: (string | null)[] }) => action(args);
 });
