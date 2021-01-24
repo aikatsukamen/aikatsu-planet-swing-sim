@@ -206,7 +206,7 @@ const calcSpecified = (
         // あいてのレベルがXXXより大きかったら
         const temp = effectedData[targetType][eneIndex];
         if (temp) {
-          if (temp.baseLevel + temp.effectLevel > ene.skill.condition.level) {
+          if (temp.baseLevel > ene.skill.condition.level) {
             isConditionOk = true;
             isExistNewApplied = true;
           }

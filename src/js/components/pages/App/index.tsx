@@ -401,7 +401,7 @@ const App: React.FC<PropsType> = (props: PropsType) => {
           </div>
           <Modal open={filterOpen} modalClose={filterModalClose}>
             <div style={{ height: '100vh', width: '100vw', maxHeight: 500, maxWidth: 300 }}>
-              <CardFilter />
+              <CardFilter clickButton={filterModalClose} />
             </div>
           </Modal>
           <Modal open={favoriteOpen} modalClose={favoriteModalClose}>

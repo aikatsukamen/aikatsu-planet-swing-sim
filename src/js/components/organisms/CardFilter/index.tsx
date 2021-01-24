@@ -28,7 +28,9 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-type ComponentType = {};
+type ComponentType = {
+  clickButton?: Function;
+};
 type ConnectType = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
 
 type PropsType = ComponentType & ConnectType;
@@ -46,6 +48,7 @@ const App: React.FC<PropsType> = (props: PropsType) => {
 
   const resetButton = () => {
     props.resetFilter();
+    if (props.clickButton) props.clickButton();
   };
 
   const applyButton = () => {
@@ -66,6 +69,7 @@ const App: React.FC<PropsType> = (props: PropsType) => {
       skillEffectType,
       skillEffectValue,
     });
+    if (props.clickButton) props.clickButton();
   };
 
   return (
