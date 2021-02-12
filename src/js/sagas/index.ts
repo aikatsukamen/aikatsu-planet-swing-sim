@@ -67,10 +67,27 @@ function* fetchCardInfo() {
     i++;
   }
 
+  // カードIDでソート
   list = list.sort((a, b) => {
-    if (a.dressId > b.dressId) return 1;
-    if (a.dressId < b.dressId) return -1;
-    return 0;
+    // if (a.dressId > b.dressId) return 1;
+    // if (a.dressId < b.dressId) return -1;
+    try {
+      const a1 = a.cardId.split('-')[0];
+      const a2 = a.cardId.split('-')[1];
+
+      const b1 = b.cardId.split('-')[0];
+      const b2 = b.cardId.split('-')[1];
+
+      if (a1 > b1) return 1;
+      if (a1 < b1) return -1;
+
+      if (Number(a2) > Number(b2)) return 1;
+      if (Number(a2) < Number(b2)) return -1;
+
+      return 0;
+    } catch (e) {
+      return 0;
+    }
   });
 
   // 更新

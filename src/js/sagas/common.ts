@@ -132,6 +132,14 @@ export const calcEffectLevel = (allyCards: (CardInfo | undefined)[], enemyCards:
   return data;
 };
 
+/**
+ *
+ * @param cards1 計算の基準となるカード
+ * @param cards2 計算の相手側となるカード
+ * @param type card1がどっちサイドか
+ * @param effectedData レベルの情報
+ * @param appliedCard カードごとに適用済みか否かの配列
+ */
 const calcSpecified = (
   cards1: (CardInfo | undefined)[],
   cards2: (CardInfo | undefined)[],
@@ -147,11 +155,12 @@ const calcSpecified = (
     // スキル適用済みのカードならスキップ
     if (appliedCard[type][eneIndex] === true) continue;
 
-    const ene = cards1[eneIndex];
-    if (!ene) continue;
+    const targetCard = cards1[eneIndex];
+    if (!targetCard) continue;
 
+    /** いずれかの条件を満たした */
     let isConditionOk = false;
-    switch (ene.skill.condition.value) {
+    switch (targetCard.skill.condition.value) {
       case 0: {
         // ドレシアチャンスで勝ったら
         isConditionOk = true;
@@ -162,7 +171,7 @@ const calcSpecified = (
         // あいてのタイプがXXXだったら
         const temp = cards2[eneIndex];
         if (temp) {
-          if (temp.dressiaType === ene.skill.condition.dressiaType) {
+          if (temp.dressiaType === targetCard.skill.condition.dressiaType) {
             isConditionOk = true;
             isExistNewApplied = true;
           }
@@ -173,7 +182,7 @@ const calcSpecified = (
         // あいてのレアリティがXXXだったら
         const temp = cards2[eneIndex];
         if (temp) {
-          if (temp.rarity === ene.skill.condition.rarity || (ene.skill.condition.rarity === 'PR' && temp.rarity === 'SEC')) {
+          if (temp.rarity === targetCard.skill.condition.rarity || (targetCard.skill.condition.rarity === 'PR' && temp.rarity === 'SEC')) {
             isConditionOk = true;
             isExistNewApplied = true;
           }
@@ -184,7 +193,7 @@ const calcSpecified = (
         // あいてのドレシアがXXXだったら（名前）
         const temp = cards2[eneIndex];
         if (temp) {
-          if (temp.cardName === ene.skill.condition.cardname) {
+          if (temp.cardName === targetCard.skill.condition.cardname) {
             isConditionOk = true;
             isExistNewApplied = true;
           }
@@ -195,7 +204,10 @@ const calcSpecified = (
         // あいてのドレシアがXXXだったら（レアリティ、名前）
         const temp = cards2[eneIndex];
         if (temp) {
-          if (temp.cardName === ene.skill.condition.cardname && (temp.rarity === ene.skill.condition.rarity || (ene.skill.condition.rarity === 'PR' && temp.rarity === 'SEC'))) {
+          if (
+            temp.cardName === targetCard.skill.condition.cardname &&
+            (temp.rarity === targetCard.skill.condition.rarity || (targetCard.skill.condition.rarity === 'PR' && temp.rarity === 'SEC'))
+          ) {
             isConditionOk = true;
             isExistNewApplied = true;
           }
@@ -206,7 +218,7 @@ const calcSpecified = (
         // あいてのレベルがXXXより大きかったら
         const temp = effectedData[targetType][eneIndex];
         if (temp) {
-          if (temp.baseLevel > ene.skill.condition.level) {
+          if (temp.baseLevel > targetCard.skill.condition.level) {
             isConditionOk = true;
             isExistNewApplied = true;
           }
@@ -219,7 +231,7 @@ const calcSpecified = (
           if (eneIndex === j) continue;
           const temp = cards1[j];
           if (!temp) continue;
-          if (temp.dressiaType === ene.skill.condition.dressiaType) isConditionOk = true;
+          if (temp.dressiaType === targetCard.skill.condition.dressiaType) isConditionOk = true;
         }
         break;
       }
@@ -229,7 +241,7 @@ const calcSpecified = (
           if (eneIndex === j) continue;
           const temp = cards1[j];
           if (!temp) continue;
-          if (temp.rarity === ene.skill.condition.rarity || (ene.skill.condition.rarity === 'PR' && temp.rarity === 'SEC')) isConditionOk = true;
+          if (temp.rarity === targetCard.skill.condition.rarity || (targetCard.skill.condition.rarity === 'PR' && temp.rarity === 'SEC')) isConditionOk = true;
         }
         break;
       }
@@ -239,7 +251,7 @@ const calcSpecified = (
           if (eneIndex === j) continue;
           const temp = cards1[j];
           if (!temp) continue;
-          if (temp.cardName === ene.skill.condition.cardname) isConditionOk = true;
+          if (temp.cardName === targetCard.skill.condition.cardname) isConditionOk = true;
         }
         break;
       }
@@ -249,17 +261,34 @@ const calcSpecified = (
           if (eneIndex === j) continue;
           const temp = cards1[j];
           if (!temp) continue;
-          if (temp.cardName === ene.skill.condition.cardname && temp.rarity === ene.skill.condition.rarity) isConditionOk = true;
+          if (temp.cardName === targetCard.skill.condition.cardname && temp.rarity === targetCard.skill.condition.rarity) isConditionOk = true;
         }
         break;
       }
       case 300: {
         // 300: アバターパーツ
         isConditionOk = true;
+        isExistNewApplied = true;
         break;
       }
+      case 400: {
+        // 400: スロット
+        // スロットの名前が、置いてる位置とあってれば発動
+        enum battleEnum {
+          'オープニングバトル',
+          'メインバトル',
+          'クライマックスバトル',
+        }
+        const condPositionIndex = battleEnum[targetCard.skill.condition.slot];
+        if (condPositionIndex === eneIndex) {
+          isConditionOk = true;
+          isExistNewApplied = true;
+        }
+      }
     }
-    if (!ene.skill.text.condition) {
+
+    // 条件分が存在しない場合は、無条件で発動
+    if (!targetCard.skill.text.condition) {
       isConditionOk = true;
       isExistNewApplied = true;
     }
@@ -268,20 +297,20 @@ const calcSpecified = (
     appliedCard[type][eneIndex] = true;
 
     // 効果を発揮
-    switch (ene.skill.effect.target.type) {
+    switch (targetCard.skill.effect.target.type) {
       case 0: {
         // じぶん
-        switch (ene.skill.effect.type) {
+        switch (targetCard.skill.effect.type) {
           case 0: {
-            effectedData[type][eneIndex].effectLevel += ene.skill.effect.level;
+            effectedData[type][eneIndex].effectLevel += targetCard.skill.effect.level;
             break;
           }
           case 1: {
-            effectedData[type][eneIndex].scoreup += ene.skill.effect.scoreup;
+            effectedData[type][eneIndex].scoreup += targetCard.skill.effect.scoreup;
             break;
           }
           case 2: {
-            effectedData[type][eneIndex].chanceBonus += ene.skill.effect.chancebonus;
+            effectedData[type][eneIndex].chanceBonus += targetCard.skill.effect.chancebonus;
             break;
           }
         }
@@ -292,17 +321,17 @@ const calcSpecified = (
         for (let j = 0; j < cards1.length; j++) {
           if (j === eneIndex) continue;
 
-          switch (ene.skill.effect.type) {
+          switch (targetCard.skill.effect.type) {
             case 0: {
-              effectedData[type][j].effectLevel += ene.skill.effect.level;
+              effectedData[type][j].effectLevel += targetCard.skill.effect.level;
               break;
             }
             case 1: {
-              effectedData[type][j].scoreup += ene.skill.effect.scoreup;
+              effectedData[type][j].scoreup += targetCard.skill.effect.scoreup;
               break;
             }
             case 2: {
-              effectedData[type][j].chanceBonus += ene.skill.effect.chancebonus;
+              effectedData[type][j].chanceBonus += targetCard.skill.effect.chancebonus;
               break;
             }
           }
@@ -312,17 +341,17 @@ const calcSpecified = (
       case 2: {
         // ぜんいん
         for (let j = 0; j < cards1.length; j++) {
-          switch (ene.skill.effect.type) {
+          switch (targetCard.skill.effect.type) {
             case 0: {
-              effectedData[type][j].effectLevel += ene.skill.effect.level;
+              effectedData[type][j].effectLevel += targetCard.skill.effect.level;
               break;
             }
             case 1: {
-              effectedData[type][j].scoreup += ene.skill.effect.scoreup;
+              effectedData[type][j].scoreup += targetCard.skill.effect.scoreup;
               break;
             }
             case 2: {
-              effectedData[type][j].chanceBonus += ene.skill.effect.chancebonus;
+              effectedData[type][j].chanceBonus += targetCard.skill.effect.chancebonus;
               break;
             }
           }
@@ -331,17 +360,17 @@ const calcSpecified = (
       }
       case 3: {
         // オープニング
-        switch (ene.skill.effect.type) {
+        switch (targetCard.skill.effect.type) {
           case 0: {
-            effectedData[type][0].effectLevel += ene.skill.effect.level;
+            effectedData[type][0].effectLevel += targetCard.skill.effect.level;
             break;
           }
           case 1: {
-            effectedData[type][0].scoreup += ene.skill.effect.scoreup;
+            effectedData[type][0].scoreup += targetCard.skill.effect.scoreup;
             break;
           }
           case 2: {
-            effectedData[type][0].chanceBonus += ene.skill.effect.chancebonus;
+            effectedData[type][0].chanceBonus += targetCard.skill.effect.chancebonus;
             break;
           }
         }
@@ -349,17 +378,17 @@ const calcSpecified = (
       }
       case 4: {
         // メイン
-        switch (ene.skill.effect.type) {
+        switch (targetCard.skill.effect.type) {
           case 0: {
-            effectedData[type][1].effectLevel += ene.skill.effect.level;
+            effectedData[type][1].effectLevel += targetCard.skill.effect.level;
             break;
           }
           case 1: {
-            effectedData[type][1].scoreup += ene.skill.effect.scoreup;
+            effectedData[type][1].scoreup += targetCard.skill.effect.scoreup;
             break;
           }
           case 2: {
-            effectedData[type][1].chanceBonus += ene.skill.effect.chancebonus;
+            effectedData[type][1].chanceBonus += targetCard.skill.effect.chancebonus;
             break;
           }
         }
@@ -367,17 +396,17 @@ const calcSpecified = (
       }
       case 5: {
         // クライマックス
-        switch (ene.skill.effect.type) {
+        switch (targetCard.skill.effect.type) {
           case 0: {
-            effectedData[type][2].effectLevel += ene.skill.effect.level;
+            effectedData[type][2].effectLevel += targetCard.skill.effect.level;
             break;
           }
           case 1: {
-            effectedData[type][2].scoreup += ene.skill.effect.scoreup;
+            effectedData[type][2].scoreup += targetCard.skill.effect.scoreup;
             break;
           }
           case 2: {
-            effectedData[type][2].chanceBonus += ene.skill.effect.chancebonus;
+            effectedData[type][2].chanceBonus += targetCard.skill.effect.chancebonus;
             break;
           }
         }
@@ -388,18 +417,18 @@ const calcSpecified = (
         for (let j = 0; j < cards1.length; j++) {
           const target = cards1[j];
           if (!target) continue;
-          if (target.dressiaType !== ene.skill.effect.target.dressiaType) continue;
-          switch (ene.skill.effect.type) {
+          if (target.dressiaType !== targetCard.skill.effect.target.dressiaType) continue;
+          switch (targetCard.skill.effect.type) {
             case 0: {
-              effectedData[type][j].effectLevel += ene.skill.effect.level;
+              effectedData[type][j].effectLevel += targetCard.skill.effect.level;
               break;
             }
             case 1: {
-              effectedData[type][j].scoreup += ene.skill.effect.scoreup;
+              effectedData[type][j].scoreup += targetCard.skill.effect.scoreup;
               break;
             }
             case 2: {
-              effectedData[type][j].chanceBonus += ene.skill.effect.chancebonus;
+              effectedData[type][j].chanceBonus += targetCard.skill.effect.chancebonus;
               break;
             }
           }
@@ -411,18 +440,18 @@ const calcSpecified = (
         for (let j = 0; j < cards1.length; j++) {
           const target = cards1[j];
           if (!target) continue;
-          if (target.rarity !== ene.skill.effect.target.rarity) continue;
-          switch (ene.skill.effect.type) {
+          if (target.rarity !== targetCard.skill.effect.target.rarity) continue;
+          switch (targetCard.skill.effect.type) {
             case 0: {
-              effectedData[type][j].effectLevel += ene.skill.effect.level;
+              effectedData[type][j].effectLevel += targetCard.skill.effect.level;
               break;
             }
             case 1: {
-              effectedData[type][j].scoreup += ene.skill.effect.scoreup;
+              effectedData[type][j].scoreup += targetCard.skill.effect.scoreup;
               break;
             }
             case 2: {
-              effectedData[type][j].chanceBonus += ene.skill.effect.chancebonus;
+              effectedData[type][j].chanceBonus += targetCard.skill.effect.chancebonus;
               break;
             }
           }

@@ -34,6 +34,7 @@ export type CardInfo = {
        * - 202: なかまにドレシアがいたら（名前）
        * - 203: なかまにドレシアがいたら（レアリティ、名前）
        * - 300: じぶんのアバターパーツがXXXだったら
+       * - 400: XXXXにセットしたら
        */
       value: number;
       /** 条件: ドレシアタイプ */
@@ -48,6 +49,8 @@ export type CardInfo = {
       avatarCategory: string;
       /** 条件: アバターパーツ名 */
       avatarName: string;
+      /** 条件: スロット位置 */
+      slot: string;
     };
     effect: {
       /**
