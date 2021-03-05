@@ -103,10 +103,10 @@ const App: React.FC<PropsType> = (props: PropsType) => {
           <div className={classes.label}>スキル効果</div>
           <Select defaultValue={props.filter.skillEffectType} inputRef={skillEffectTypeRef} placeholder={'スキル効果種別'} fullWidth={true}>
             <MenuItem value={'0'}>-</MenuItem>
-            <MenuItem value={'1'}>スキル無し</MenuItem>
+            {/* <MenuItem value={'1'}>スキル無し</MenuItem> */}
             <MenuItem value={'2'}>レベル</MenuItem>
             <MenuItem value={'3'}>ドレシアゲージがたまりやすい</MenuItem>
-            <MenuItem value={'4'}>ドレシアチャンスボーナスアップ</MenuItem>
+            {/* <MenuItem value={'4'}>ドレシアチャンスボーナスアップ</MenuItem> */}
           </Select>
           <div className={classes.minilabel}>スキル効果量</div>
           <TextField defaultValue={props.filter.skillEffectValue > 0 ? props.filter.skillEffectValue : ''} inputRef={skillEffectValueRef} fullWidth={true} />

@@ -162,14 +162,15 @@ const App: React.FC<PropsType> = (props: PropsType) => {
 
     // スキル効果の値
     if (filter.skillEffectType && filter.skillEffectValue) {
+      console.log(`skillEffectType: ${filter.skillEffectType}   skillEffectValue: ${filter.skillEffectValue}`);
       switch (filter.skillEffectType) {
-        case 1:
+        case 2:
           newList = newList.filter((value) => value.skill.effect.level === filter.skillEffectValue);
           break;
-        case 2:
+        case 3:
           newList = newList.filter((value) => value.skill.effect.scoreup === filter.skillEffectValue);
           break;
-        case 3:
+        case 4:
           newList = newList.filter((value) => value.skill.effect.chancebonus === filter.skillEffectValue);
           break;
       }

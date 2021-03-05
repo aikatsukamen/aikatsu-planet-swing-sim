@@ -49,7 +49,14 @@ export type GlobalState = {
     levelCond: 0 | 1 | 2;
     /** スキルテキストで検索 */
     skillText: string;
-    /** 効果タイプ。未指定、スキル無し、レベル、たまりやすい、チャンス */
+    /**
+     * 効果タイプ
+     * - 0: 未指定
+     * - 1: スキル無し
+     * - 2: レベル
+     * - 3: たまりやすい
+     * - 4: チャンス
+     */
     skillEffectType: 0 | 1 | 2 | 3 | 4;
     /** 効果量 */
     skillEffectValue: number;
