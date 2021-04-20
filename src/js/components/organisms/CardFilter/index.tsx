@@ -57,7 +57,7 @@ const App: React.FC<PropsType> = (props: PropsType) => {
     const level: number = Number(levelRef.current?.value) ?? 0;
     const levelCond = (Number(levelCondRef.current?.value) as 0 | 1 | 2) ?? 0;
     const skillText: string = skillTextRef.current?.value ?? '';
-    const skillEffectType: 0 | 1 | 2 | 3 | 4 = (Number(skillEffectTypeRef.current?.value) as 0 | 1 | 2 | 3 | 4) ?? 0;
+    const skillEffectType: 0 | 1 | 2 | 3 | 4 | 5 = (Number(skillEffectTypeRef.current?.value) as 0 | 1 | 2 | 3 | 4 | 5) ?? 0;
     const skillEffectValue: number = Number(skillEffectValueRef.current?.value) ?? 0;
 
     props.updateFilter({
@@ -106,9 +106,10 @@ const App: React.FC<PropsType> = (props: PropsType) => {
             {/* <MenuItem value={'1'}>スキル無し</MenuItem> */}
             <MenuItem value={'2'}>レベル</MenuItem>
             <MenuItem value={'3'}>ドレシアゲージがたまりやすい</MenuItem>
-            {/* <MenuItem value={'4'}>ドレシアチャンスボーナスアップ</MenuItem> */}
+            <MenuItem value={'4'}>ドレシアチャンスボーナスアップ</MenuItem>
+            <MenuItem value={'5'}>パーフェクトがとりやすい</MenuItem>
           </Select>
-          <div className={classes.minilabel}>スキル効果量</div>
+          <div className={classes.minilabel}>スキル効果量(数値で入力。省略可)</div>
           <TextField defaultValue={props.filter.skillEffectValue > 0 ? props.filter.skillEffectValue : ''} inputRef={skillEffectValueRef} fullWidth={true} />
         </div>
       </div>

@@ -56,8 +56,9 @@ export type GlobalState = {
      * - 2: レベル
      * - 3: たまりやすい
      * - 4: チャンス
+     * - 5: パーフェクト
      */
-    skillEffectType: 0 | 1 | 2 | 3 | 4;
+    skillEffectType: 0 | 1 | 2 | 3 | 4 | 5;
     /** 効果量 */
     skillEffectValue: number;
   };

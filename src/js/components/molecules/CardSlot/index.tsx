@@ -25,6 +25,7 @@ type PropsType = {
     effectLevel: number;
     scoreup: number;
     chanceBonus: number;
+    judgeSupportPerfect: number;
   };
 };
 

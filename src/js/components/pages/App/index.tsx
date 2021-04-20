@@ -146,32 +146,37 @@ const App: React.FC<PropsType> = (props: PropsType) => {
     if (filter.skillEffectType) {
       switch (filter.skillEffectType) {
         case 1:
-          newList = newList.filter((value) => value.skill.effect.level === 0 && value.skill.effect.scoreup === 0 && value.skill.effect.chancebonus === 0);
+          newList = newList.filter(
+            (value) => value.skill.effect.level === 0 && value.skill.effect.scoreup === 0 && value.skill.effect.chancebonus === 0 && value.skill.effect.judgeSupportPerfect === 0,
+          );
           break;
         case 2:
-          newList = newList.filter((value) => value.skill.effect.level > 0);
+          if (filter.skillEffectValue !== 0) {
+            newList = newList.filter((value) => value.skill.effect.level === filter.skillEffectValue);
+          } else {
+            newList = newList.filter((value) => value.skill.effect.level > 0);
+          }
           break;
         case 3:
-          newList = newList.filter((value) => value.skill.effect.scoreup > 0);
+          if (filter.skillEffectValue !== 0) {
+            newList = newList.filter((value) => value.skill.effect.scoreup === filter.skillEffectValue);
+          } else {
+            newList = newList.filter((value) => value.skill.effect.scoreup > 0);
+          }
           break;
         case 4:
-          newList = newList.filter((value) => value.skill.effect.chancebonus > 0);
+          if (filter.skillEffectValue !== 0) {
+            newList = newList.filter((value) => value.skill.effect.chancebonus === filter.skillEffectValue);
+          } else {
+            newList = newList.filter((value) => value.skill.effect.chancebonus > 0);
+          }
           break;
-      }
-    }
-
-    // スキル効果の値
-    if (filter.skillEffectType && filter.skillEffectValue) {
-      console.log(`skillEffectType: ${filter.skillEffectType}   skillEffectValue: ${filter.skillEffectValue}`);
-      switch (filter.skillEffectType) {
-        case 2:
-          newList = newList.filter((value) => value.skill.effect.level === filter.skillEffectValue);
-          break;
-        case 3:
-          newList = newList.filter((value) => value.skill.effect.scoreup === filter.skillEffectValue);
-          break;
-        case 4:
-          newList = newList.filter((value) => value.skill.effect.chancebonus === filter.skillEffectValue);
+        case 5:
+          if (filter.skillEffectValue !== 0) {
+            newList = newList.filter((value) => value.skill.effect.judgeSupportPerfect === filter.skillEffectValue);
+          } else {
+            newList = newList.filter((value) => value.skill.effect.judgeSupportPerfect > 0);
+          }
           break;
       }
     }
@@ -186,12 +191,14 @@ const App: React.FC<PropsType> = (props: PropsType) => {
       effectLevel: number;
       scoreup: number;
       chanceBonus: number;
+      judgeSupportPerfect: number;
     }[];
     enemy: {
       baseLevel: number;
       effectLevel: number;
       scoreup: number;
       chanceBonus: number;
+      judgeSupportPerfect: number;
     }[];
   }>({
     ally: [
@@ -200,18 +207,21 @@ const App: React.FC<PropsType> = (props: PropsType) => {
         effectLevel: 0,
         scoreup: 0,
         chanceBonus: 0,
+        judgeSupportPerfect: 0,
       },
       {
         baseLevel: 0,
         effectLevel: 0,
         scoreup: 0,
         chanceBonus: 0,
+        judgeSupportPerfect: 0,
       },
       {
         baseLevel: 0,
         effectLevel: 0,
         scoreup: 0,
         chanceBonus: 0,
+        judgeSupportPerfect: 0,
       },
     ],
     enemy: [
@@ -220,18 +230,21 @@ const App: React.FC<PropsType> = (props: PropsType) => {
         effectLevel: 0,
         scoreup: 0,
         chanceBonus: 0,
+        judgeSupportPerfect: 0,
       },
       {
         baseLevel: 0,
         effectLevel: 0,
         scoreup: 0,
         chanceBonus: 0,
+        judgeSupportPerfect: 0,
       },
       {
         baseLevel: 0,
         effectLevel: 0,
         scoreup: 0,
         chanceBonus: 0,
+        judgeSupportPerfect: 0,
       },
     ],
   });
@@ -323,6 +336,7 @@ const App: React.FC<PropsType> = (props: PropsType) => {
 
   return (
     <div>
+      <div className="SW-update-dialog"></div>
       {/* TODO: コンポーネント単位に分ける */}
       <Hidden mdUp>
         <div className={classes.root}>

@@ -58,18 +58,21 @@ export const calcEffectLevel = (allyCards: (CardInfo | undefined)[], enemyCards:
         effectLevel: 0,
         scoreup: 0,
         chanceBonus: 0,
+        judgeSupportPerfect: 0,
       },
       {
         baseLevel: 0,
         effectLevel: 0,
         scoreup: 0,
         chanceBonus: 0,
+        judgeSupportPerfect: 0,
       },
       {
         baseLevel: 0,
         effectLevel: 0,
         scoreup: 0,
         chanceBonus: 0,
+        judgeSupportPerfect: 0,
       },
     ],
     enemy: [
@@ -78,18 +81,21 @@ export const calcEffectLevel = (allyCards: (CardInfo | undefined)[], enemyCards:
         effectLevel: 0,
         scoreup: 0,
         chanceBonus: 0,
+        judgeSupportPerfect: 0,
       },
       {
         baseLevel: 0,
         effectLevel: 0,
         scoreup: 0,
         chanceBonus: 0,
+        judgeSupportPerfect: 0,
       },
       {
         baseLevel: 0,
         effectLevel: 0,
         scoreup: 0,
         chanceBonus: 0,
+        judgeSupportPerfect: 0,
       },
     ],
   };
@@ -225,6 +231,17 @@ const calcSpecified = (
         }
         break;
       }
+      case 105: {
+        // あいてのレベルがXXXより小さかったら
+        const temp = effectedData[targetType][eneIndex];
+        if (temp) {
+          if (temp.baseLevel < targetCard.skill.condition.level) {
+            isConditionOk = true;
+            isExistNewApplied = true;
+          }
+        }
+        break;
+      }
       case 200: {
         // 200: なかまにタイプがいたら
         for (let j = 0; j < cards1.length; j++) {
@@ -285,6 +302,18 @@ const calcSpecified = (
           isExistNewApplied = true;
         }
       }
+      case 401: {
+        // 401: 時刻
+        // 常時発動にしておく
+        isConditionOk = true;
+        isExistNewApplied = true;
+      }
+      case 500: {
+        // イベント中だったら
+        // 常時発動にしておく
+        isConditionOk = true;
+        isExistNewApplied = true;
+      }
     }
 
     // 条件分が存在しない場合は、無条件で発動
@@ -313,6 +342,10 @@ const calcSpecified = (
             effectedData[type][eneIndex].chanceBonus += targetCard.skill.effect.chancebonus;
             break;
           }
+          case 3: {
+            effectedData[type][eneIndex].judgeSupportPerfect += targetCard.skill.effect.judgeSupportPerfect;
+            break;
+          }
         }
         break;
       }
@@ -332,6 +365,10 @@ const calcSpecified = (
             }
             case 2: {
               effectedData[type][j].chanceBonus += targetCard.skill.effect.chancebonus;
+              break;
+            }
+            case 3: {
+              effectedData[type][j].judgeSupportPerfect += targetCard.skill.effect.judgeSupportPerfect;
               break;
             }
           }
@@ -354,6 +391,10 @@ const calcSpecified = (
               effectedData[type][j].chanceBonus += targetCard.skill.effect.chancebonus;
               break;
             }
+            case 3: {
+              effectedData[type][j].judgeSupportPerfect += targetCard.skill.effect.judgeSupportPerfect;
+              break;
+            }
           }
         }
         break;
@@ -371,6 +412,10 @@ const calcSpecified = (
           }
           case 2: {
             effectedData[type][0].chanceBonus += targetCard.skill.effect.chancebonus;
+            break;
+          }
+          case 3: {
+            effectedData[type][0].judgeSupportPerfect += targetCard.skill.effect.judgeSupportPerfect;
             break;
           }
         }
@@ -391,6 +436,10 @@ const calcSpecified = (
             effectedData[type][1].chanceBonus += targetCard.skill.effect.chancebonus;
             break;
           }
+          case 3: {
+            effectedData[type][1].judgeSupportPerfect += targetCard.skill.effect.judgeSupportPerfect;
+            break;
+          }
         }
         break;
       }
@@ -407,6 +456,10 @@ const calcSpecified = (
           }
           case 2: {
             effectedData[type][2].chanceBonus += targetCard.skill.effect.chancebonus;
+            break;
+          }
+          case 3: {
+            effectedData[type][2].judgeSupportPerfect += targetCard.skill.effect.judgeSupportPerfect;
             break;
           }
         }
@@ -431,6 +484,10 @@ const calcSpecified = (
               effectedData[type][j].chanceBonus += targetCard.skill.effect.chancebonus;
               break;
             }
+            case 3: {
+              effectedData[type][j].judgeSupportPerfect += targetCard.skill.effect.judgeSupportPerfect;
+              break;
+            }
           }
         }
         break;
@@ -452,6 +509,10 @@ const calcSpecified = (
             }
             case 2: {
               effectedData[type][j].chanceBonus += targetCard.skill.effect.chancebonus;
+              break;
+            }
+            case 3: {
+              effectedData[type][j].judgeSupportPerfect += targetCard.skill.effect.judgeSupportPerfect;
               break;
             }
           }
