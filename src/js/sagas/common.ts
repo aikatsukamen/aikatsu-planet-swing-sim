@@ -163,6 +163,9 @@ const calcSpecified = (
 
     const targetCard = cards1[eneIndex];
     if (!targetCard) continue;
+    console.log(
+      `position=${eneIndex} ${targetCard.cardName} cond=${targetCard.skill.condition.value} target=${targetCard.skill.effect.target.type} effect=${targetCard.skill.effect.type}`,
+    );
 
     /** いずれかの条件を満たした */
     let isConditionOk = false;
@@ -301,28 +304,32 @@ const calcSpecified = (
           isConditionOk = true;
           isExistNewApplied = true;
         }
+        break;
       }
       case 401: {
         // 401: 時刻
         // 常時発動にしておく
         isConditionOk = true;
         isExistNewApplied = true;
+        break;
       }
       case 500: {
         // イベント中だったら
         // 常時発動にしておく
         isConditionOk = true;
         isExistNewApplied = true;
+        break;
       }
       case 600: {
         // xxxがパーフェクトを10回以上とれたら
         // 常時発動にしておく
         isConditionOk = true;
         isExistNewApplied = true;
+        break;
       }
     }
 
-    // 条件分が存在しない場合は、無条件で発動
+    // 条件が存在しない場合は、無条件で発動
     if (!targetCard.skill.text.condition) {
       isConditionOk = true;
       isExistNewApplied = true;
