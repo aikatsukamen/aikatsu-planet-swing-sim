@@ -314,6 +314,12 @@ const calcSpecified = (
         isConditionOk = true;
         isExistNewApplied = true;
       }
+      case 600: {
+        // xxxがパーフェクトを10回以上とれたら
+        // 常時発動にしておく
+        isConditionOk = true;
+        isExistNewApplied = true;
+      }
     }
 
     // 条件分が存在しない場合は、無条件で発動
@@ -352,7 +358,17 @@ const calcSpecified = (
       case 1: {
         // なかま
         for (let j = 0; j < cards1.length; j++) {
-          if (j === eneIndex) continue;
+          if (j === eneIndex) continue; // じぶんは除外
+
+          // パフェ回数をとったやつ
+          if (targetCard.skill.condition.value === 600) {
+            switch (targetCard.skill.condition.notesAchieve) {
+              case 'じぶん': {
+                // じぶんより前の位置には適用しない
+                if (j < eneIndex) continue;
+              }
+            }
+          }
 
           switch (targetCard.skill.effect.type) {
             case 0: {
@@ -378,6 +394,16 @@ const calcSpecified = (
       case 2: {
         // ぜんいん
         for (let j = 0; j < cards1.length; j++) {
+          // パフェ回数をとったやつ
+          if (targetCard.skill.condition.value === 600) {
+            switch (targetCard.skill.condition.notesAchieve) {
+              case 'じぶん': {
+                // じぶんより前の位置には適用しない
+                if (j < eneIndex) continue;
+              }
+            }
+          }
+
           switch (targetCard.skill.effect.type) {
             case 0: {
               effectedData[type][j].effectLevel += targetCard.skill.effect.level;
@@ -400,6 +426,16 @@ const calcSpecified = (
         break;
       }
       case 3: {
+        // パフェ回数をとったやつ
+        if (targetCard.skill.condition.value === 600) {
+          switch (targetCard.skill.condition.notesAchieve) {
+            case 'じぶん': {
+              // じぶんより前の位置には適用しない
+              if (0 < eneIndex) continue;
+            }
+          }
+        }
+
         // オープニング
         switch (targetCard.skill.effect.type) {
           case 0: {
@@ -422,6 +458,16 @@ const calcSpecified = (
         break;
       }
       case 4: {
+        // パフェ回数をとったやつ
+        if (targetCard.skill.condition.value === 600) {
+          switch (targetCard.skill.condition.notesAchieve) {
+            case 'じぶん': {
+              // じぶんより前の位置には適用しない
+              if (1 < eneIndex) continue;
+            }
+          }
+        }
+
         // メイン
         switch (targetCard.skill.effect.type) {
           case 0: {
@@ -468,6 +514,16 @@ const calcSpecified = (
       case 6: {
         // ドレシアタイプ
         for (let j = 0; j < cards1.length; j++) {
+          // パフェ回数をとったやつ
+          if (targetCard.skill.condition.value === 600) {
+            switch (targetCard.skill.condition.notesAchieve) {
+              case 'じぶん': {
+                // じぶんより前の位置には適用しない
+                if (j < eneIndex) continue;
+              }
+            }
+          }
+
           const target = cards1[j];
           if (!target) continue;
           if (target.dressiaType !== targetCard.skill.effect.target.dressiaType) continue;
@@ -495,6 +551,16 @@ const calcSpecified = (
       case 7: {
         // レアリティ
         for (let j = 0; j < cards1.length; j++) {
+          // パフェ回数をとったやつ
+          if (targetCard.skill.condition.value === 600) {
+            switch (targetCard.skill.condition.notesAchieve) {
+              case 'じぶん': {
+                // じぶんより前の位置には適用しない
+                if (j < eneIndex) continue;
+              }
+            }
+          }
+
           const target = cards1[j];
           if (!target) continue;
           if (target.rarity !== targetCard.skill.effect.target.rarity) continue;

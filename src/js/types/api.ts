@@ -38,6 +38,7 @@ export type CardInfo = {
        * - 400: XXXXにセットしたら(スロット)
        * - 401: XXXXにセットしたら(時刻)
        * - 500: イベント中だったら
+       * - 600: パーフェクトX回とったら
        */
       value: number;
       /** 条件: ドレシアタイプ */
@@ -56,6 +57,8 @@ export type CardInfo = {
       slot: string;
       /** 条件: 時刻 */
       time: string;
+      /** 条件: ノーツ回数を達成した人の名称 */
+      notesAchieve: string;
     };
     effect: {
       /**
