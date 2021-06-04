@@ -51,6 +51,10 @@ const App: React.FC<PropsType> = (props: PropsType) => {
     if (props.clickButton) props.clickButton();
   };
 
+  const onchangeform = () => {
+    applyButton();
+  }
+
   const applyButton = () => {
     const name: string = nameRef.current?.value ?? '';
     const dressiaType: string = dressiaTypeRef.current?.value ?? '';
@@ -78,17 +82,17 @@ const App: React.FC<PropsType> = (props: PropsType) => {
       <div className={classes.content}>
         <div>
           <div className={classes.label}>スイング名(部分一致)</div>
-          <TextField defaultValue={props.filter.name} inputRef={nameRef} fullWidth={true} />
+          <TextField defaultValue={props.filter.name} inputRef={nameRef} fullWidth={true} onChange={onchangeform} />
         </div>
         <div>
           <div className={classes.label}>ドレシアタイプ名(部分一致)</div>
-          <TextField defaultValue={props.filter.dressiaType} inputRef={dressiaTypeRef} fullWidth={true} />
+          <TextField defaultValue={props.filter.dressiaType} inputRef={dressiaTypeRef} fullWidth={true} onChange={onchangeform} />
         </div>
         <div>
           <div className={classes.label}>スイングレベル</div>
-          <TextField defaultValue={props.filter.level > 0 ? props.filter.level : ''} inputRef={levelRef} fullWidth={true} />
+          <TextField defaultValue={props.filter.level > 0 ? props.filter.level : ''} inputRef={levelRef} fullWidth={true} onChange={onchangeform}/>
           <div className={classes.minilabel}>スイングレベルの比較条件</div>
-          <Select defaultValue={props.filter.levelCond} inputRef={levelCondRef} fullWidth={true}>
+          <Select defaultValue={props.filter.levelCond} inputRef={levelCondRef} fullWidth={true} onChange={onchangeform}>
             <MenuItem value={'0'}>イコール</MenuItem>
             <MenuItem value={'1'}>以上</MenuItem>
             <MenuItem value={'2'}>以下</MenuItem>
@@ -97,11 +101,11 @@ const App: React.FC<PropsType> = (props: PropsType) => {
 
         <div>
           <div className={classes.label}>スキル説明文(部分一致)</div>
-          <TextField defaultValue={props.filter.skillText} inputRef={skillTextRef} fullWidth={true} />
+          <TextField defaultValue={props.filter.skillText} inputRef={skillTextRef} fullWidth={true} onChange={onchangeform}/>
         </div>
         <div>
           <div className={classes.label}>スキル効果</div>
-          <Select defaultValue={props.filter.skillEffectType} inputRef={skillEffectTypeRef} placeholder={'スキル効果種別'} fullWidth={true}>
+          <Select defaultValue={props.filter.skillEffectType} inputRef={skillEffectTypeRef} placeholder={'スキル効果種別'} fullWidth={true} onChange={onchangeform}>
             <MenuItem value={'0'}>-</MenuItem>
             {/* <MenuItem value={'1'}>スキル無し</MenuItem> */}
             <MenuItem value={'2'}>レベル</MenuItem>
@@ -119,9 +123,9 @@ const App: React.FC<PropsType> = (props: PropsType) => {
           条件リセット
         </Button>
 
-        <Button variant={'contained'} color={'primary'} size={'small'} onClick={applyButton}>
+        {/* <Button variant={'contained'} color={'primary'} size={'small'} onClick={applyButton}>
           反映
-        </Button>
+        </Button> */}
       </div>
     </div>
   );

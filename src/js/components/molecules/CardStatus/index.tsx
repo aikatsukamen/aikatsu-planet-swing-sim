@@ -27,9 +27,16 @@ type PropsType = {
 
 const App: React.FC<PropsType> = (props: PropsType) => {
   const classes = useStyles();
+  // レベルの色
+  let color = 'black';
+  if(props.card.effectLevel > 0) {
+    color = 'red';
+  } else if(props.card.effectLevel < 0) {
+    color = 'blue';
+  }
   return (
     <div className={classes.root}>
-      <Typography variant={'h6'}>{`Lv.${props.card.baseLevel + props.card.effectLevel}`}</Typography>
+      <Typography variant={'h6'} style={{color: color}}>{`Lv.${props.card.baseLevel + props.card.effectLevel}`}</Typography>
       <div className={classes.imageArea}>{props.card.scoreup > 0 ? <img src={`./images/dressia_gauge_${props.card.scoreup}.png`} height={15} /> : ''}</div>
       <div className={classes.imageArea}>{props.card.chanceBonus > 0 ? <img src={`./images/chance_bonus_${props.card.chanceBonus}.png`} height={15} /> : ''}</div>
       <div className={classes.imageArea}>

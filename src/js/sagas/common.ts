@@ -129,7 +129,7 @@ export const calcEffectLevel = (allyCards: (CardInfo | undefined)[], enemyCards:
         if (data[type][i].baseLevel + data[type][i].effectLevel > 15) {
           data[type][i].effectLevel = 15 - data[type][i].baseLevel;
         }
-        if (data[type][i].chanceBonus > 3) data[type][i].chanceBonus = 3;
+        if (data[type][i].chanceBonus > 4) data[type][i].chanceBonus = 4;
         if (data[type][i].scoreup > 3) data[type][i].scoreup = 3;
       }
     }
@@ -283,6 +283,51 @@ const calcSpecified = (
           if (!temp) continue;
           if (temp.cardName === targetCard.skill.condition.cardname && temp.rarity === targetCard.skill.condition.rarity) isConditionOk = true;
         }
+        break;
+      }
+      case 210: {
+        // 210: ぜんいんがタイプがいたら
+        let count = 0;
+        for (let j = 0; j < cards1.length; j++) {
+          const temp = cards1[j];
+          if (!temp) continue;
+          if (temp.dressiaType === targetCard.skill.condition.dressiaType) count++;
+        }
+        console.log(`type:210 count=${count}`);
+        if(count === cards1.length) isConditionOk = true;
+        break;
+      }
+      case 211: {
+        // 211: ぜんいんがレアリティがいたら
+        let count = 0;
+        for (let j = 0; j < cards1.length; j++) {
+          const temp = cards1[j];
+          if (!temp) continue;
+          if (temp.rarity === targetCard.skill.condition.rarity || (targetCard.skill.condition.rarity === 'PR' && temp.rarity === 'SEC')) count++;
+        }
+        if(count === cards1.length) isConditionOk = true;
+        break;
+      }
+      case 212: {
+        // 212: ぜんいんがドレシアがいたら（名前）
+        let count = 0;
+        for (let j = 0; j < cards1.length; j++) {
+          const temp = cards1[j];
+          if (!temp) continue;
+          if (temp.cardName === targetCard.skill.condition.cardname) count++;
+        }
+        if(count === cards1.length) isConditionOk = true;
+        break;
+      }
+      case 213: {
+        // 212: ぜんいんがドレシアがいたら（レア、名前）
+        let count = 0;
+        for (let j = 0; j < cards1.length; j++) {
+          const temp = cards1[j];
+          if (!temp) continue;
+          if (temp.cardName === targetCard.skill.condition.cardname && temp.rarity === targetCard.skill.condition.rarity) count++;
+        }
+        if(count === cards1.length) isConditionOk = true;
         break;
       }
       case 300: {

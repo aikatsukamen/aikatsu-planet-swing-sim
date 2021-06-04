@@ -415,7 +415,7 @@ const App: React.FC<PropsType> = (props: PropsType) => {
             </div>
           </div>
           <Modal open={filterOpen} modalClose={filterModalClose}>
-            <div style={{ height: '100vh', width: '100vw', maxHeight: 500, maxWidth: 300 }}>
+            <div style={{ height: '100vh', width: '100vw', maxHeight: 500, maxWidth: 250 }}>
               <CardFilter clickButton={filterModalClose} />
             </div>
           </Modal>
@@ -475,7 +475,7 @@ const App: React.FC<PropsType> = (props: PropsType) => {
                   return (
                     <Paper style={{ margin: 5, padding: 5, width: 110 }} key={card.dressId}>
                       <div style={{ position: 'relative' }}>
-                        <img src={card.imageUrl1} width={110} />
+                        <img src={card.imageUrl1} width={110} height={110} />
                       </div>
                       <div style={{ marginTop: -120 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
