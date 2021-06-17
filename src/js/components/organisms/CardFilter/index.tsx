@@ -33,7 +33,9 @@ type ComponentType = {
 };
 type ConnectType = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
 
-type PropsType = ComponentType & ConnectType;
+type PropsType = ComponentType & ConnectType & {
+  isMobile: boolean
+};
 
 const App: React.FC<PropsType> = (props: PropsType) => {
   const classes = useStyles();
@@ -47,12 +49,19 @@ const App: React.FC<PropsType> = (props: PropsType) => {
   const skillEffectValueRef = React.useRef<HTMLInputElement>(null);
 
   const resetButton = () => {
+    // stateから消す
     props.resetFilter();
+    // 再検索
     if (props.clickButton) props.clickButton();
+
+    // テキストボックス初期化
+
   };
 
   const onchangeform = () => {
-    applyButton();
+    if(!props.isMobile){
+      applyButton();
+    }
   }
 
   const applyButton = () => {
@@ -114,18 +123,20 @@ const App: React.FC<PropsType> = (props: PropsType) => {
             <MenuItem value={'5'}>パーフェクトがとりやすい</MenuItem>
           </Select>
           <div className={classes.minilabel}>スキル効果量(数値で入力。省略可)</div>
-          <TextField defaultValue={props.filter.skillEffectValue > 0 ? props.filter.skillEffectValue : ''} inputRef={skillEffectValueRef} fullWidth={true} />
+          <TextField defaultValue={props.filter.skillEffectValue > 0 ? props.filter.skillEffectValue : ''} inputRef={skillEffectValueRef} fullWidth={true} onChange={onchangeform} />
         </div>
       </div>
 
       <div style={{ display: 'flex' }}>
         <Button variant={'contained'} color={'default'} size={'small'} onClick={resetButton} style={{ marginRight: 100 }}>
-          条件リセット
+          リセット
         </Button>
 
-        {/* <Button variant={'contained'} color={'primary'} size={'small'} onClick={applyButton}>
-          反映
-        </Button> */}
+        {props.isMobile &&
+          <Button variant={'contained'} color={'primary'} size={'small'} onClick={applyButton}>
+            反映
+          </Button>
+        }
       </div>
     </div>
   );

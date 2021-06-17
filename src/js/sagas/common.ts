@@ -161,6 +161,7 @@ const calcSpecified = (
     // スキル適用済みのカードならスキップ
     if (appliedCard[type][eneIndex] === true) continue;
 
+    /** 計算の基準となるカード */
     const targetCard = cards1[eneIndex];
     if (!targetCard) continue;
     console.log(
@@ -245,13 +246,64 @@ const calcSpecified = (
         }
         break;
       }
+      case 150: {
+        // あいてにタイプがいたら
+        for (let j = 0; j < cards2.length; j++) {
+          const temp = cards2[j];
+          if (!temp) continue;
+          if (temp.dressiaType === targetCard.skill.condition.dressiaType) {
+            isConditionOk = true;
+            isExistNewApplied = true;
+          }
+        }
+        break;
+      }
+      case 151: {
+        // あいてにレアリティがいたら
+        for (let j = 0; j < cards2.length; j++) {
+          const temp = cards2[j];
+          if (!temp) continue;
+          if (temp.rarity === targetCard.skill.condition.rarity) {
+            isConditionOk = true;
+            isExistNewApplied = true;
+          }
+        }
+        break;
+      }
+      case 152: {
+        // あいてにドレシアがいたら（名前）
+        for (let j = 0; j < cards2.length; j++) {
+          const temp = cards2[j];
+          if (!temp) continue;
+          if (temp.cardName === targetCard.skill.condition.cardname) {
+            isConditionOk = true;
+            isExistNewApplied = true;
+          }
+        }
+        break;
+      }
+      case 153: {
+        // あいてにドレシアがいたら（レアリティ、名前）
+        for (let j = 0; j < cards2.length; j++) {
+          const temp = cards2[j];
+          if (!temp) continue;
+          if (temp.cardName === targetCard.skill.condition.cardname && temp.rarity === targetCard.skill.condition.rarity) {
+            isConditionOk = true;
+            isExistNewApplied = true;
+          }
+        }
+        break;
+      }
       case 200: {
         // 200: なかまにタイプがいたら
         for (let j = 0; j < cards1.length; j++) {
           if (eneIndex === j) continue;
           const temp = cards1[j];
           if (!temp) continue;
-          if (temp.dressiaType === targetCard.skill.condition.dressiaType) isConditionOk = true;
+          if (temp.dressiaType === targetCard.skill.condition.dressiaType) {
+            isConditionOk = true;
+            isExistNewApplied = true;
+          }
         }
         break;
       }
@@ -261,7 +313,10 @@ const calcSpecified = (
           if (eneIndex === j) continue;
           const temp = cards1[j];
           if (!temp) continue;
-          if (temp.rarity === targetCard.skill.condition.rarity || (targetCard.skill.condition.rarity === 'PR' && temp.rarity === 'SEC')) isConditionOk = true;
+          if (temp.rarity === targetCard.skill.condition.rarity || (targetCard.skill.condition.rarity === 'PR' && temp.rarity === 'SEC')) {
+            isConditionOk = true;
+            isExistNewApplied = true;
+          }
         }
         break;
       }
@@ -271,7 +326,10 @@ const calcSpecified = (
           if (eneIndex === j) continue;
           const temp = cards1[j];
           if (!temp) continue;
-          if (temp.cardName === targetCard.skill.condition.cardname) isConditionOk = true;
+          if (temp.cardName === targetCard.skill.condition.cardname) {
+            isConditionOk = true;
+            isExistNewApplied = true;
+          }
         }
         break;
       }
@@ -281,7 +339,10 @@ const calcSpecified = (
           if (eneIndex === j) continue;
           const temp = cards1[j];
           if (!temp) continue;
-          if (temp.cardName === targetCard.skill.condition.cardname && temp.rarity === targetCard.skill.condition.rarity) isConditionOk = true;
+          if (temp.cardName === targetCard.skill.condition.cardname && temp.rarity === targetCard.skill.condition.rarity) {
+            isConditionOk = true;
+            isExistNewApplied = true;
+          }
         }
         break;
       }
@@ -294,7 +355,10 @@ const calcSpecified = (
           if (temp.dressiaType === targetCard.skill.condition.dressiaType) count++;
         }
         console.log(`type:210 count=${count}`);
-        if(count === cards1.length) isConditionOk = true;
+        if(count === cards1.length) {
+          isConditionOk = true;
+          isExistNewApplied = true;
+        }
         break;
       }
       case 211: {
@@ -305,7 +369,10 @@ const calcSpecified = (
           if (!temp) continue;
           if (temp.rarity === targetCard.skill.condition.rarity || (targetCard.skill.condition.rarity === 'PR' && temp.rarity === 'SEC')) count++;
         }
-        if(count === cards1.length) isConditionOk = true;
+        if(count === cards1.length) {
+          isConditionOk = true;
+          isExistNewApplied = true;
+        }
         break;
       }
       case 212: {
@@ -316,7 +383,10 @@ const calcSpecified = (
           if (!temp) continue;
           if (temp.cardName === targetCard.skill.condition.cardname) count++;
         }
-        if(count === cards1.length) isConditionOk = true;
+        if(count === cards1.length) {
+          isConditionOk = true;
+          isExistNewApplied = true;
+        }
         break;
       }
       case 213: {
@@ -327,7 +397,10 @@ const calcSpecified = (
           if (!temp) continue;
           if (temp.cardName === targetCard.skill.condition.cardname && temp.rarity === targetCard.skill.condition.rarity) count++;
         }
-        if(count === cards1.length) isConditionOk = true;
+        if(count === cards1.length) {
+          isConditionOk = true;
+          isExistNewApplied = true;
+        }
         break;
       }
       case 300: {

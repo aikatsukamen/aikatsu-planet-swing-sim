@@ -416,7 +416,7 @@ const App: React.FC<PropsType> = (props: PropsType) => {
           </div>
           <Modal open={filterOpen} modalClose={filterModalClose}>
             <div style={{ height: '100vh', width: '100vw', maxHeight: 500, maxWidth: 250 }}>
-              <CardFilter clickButton={filterModalClose} />
+              <CardFilter clickButton={filterModalClose} isMobile={true} />
             </div>
           </Modal>
           <Modal open={favoriteOpen} modalClose={favoriteModalClose}>
@@ -431,7 +431,7 @@ const App: React.FC<PropsType> = (props: PropsType) => {
         <div className={classes.root}>
           <div className={classes.pcSubContent}>
             <div>
-              <CardFilter />
+              <CardFilter isMobile={false} />
             </div>
 
             {/* <div style={{ height: '50%' }}>
