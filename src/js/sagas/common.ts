@@ -246,6 +246,28 @@ const calcSpecified = (
         }
         break;
       }
+      case 120: {
+        // あいてのタイプがXXXではなかったら
+        const temp = cards2[eneIndex];
+        if (temp) {
+          if (temp.dressiaType !== targetCard.skill.condition.dressiaType) {
+            isConditionOk = true;
+            isExistNewApplied = true;
+          }
+        }
+        break;
+      }
+      case 121: {
+        // あいてのレアリティがではなかったら
+        const temp = cards2[eneIndex];
+        if (temp) {
+          if (temp.rarity !== targetCard.skill.condition.rarity) {
+            isConditionOk = true;
+            isExistNewApplied = true;
+          }
+        }
+        break;
+      }
       case 150: {
         // あいてにタイプがいたら
         for (let j = 0; j < cards2.length; j++) {
@@ -355,7 +377,7 @@ const calcSpecified = (
           if (temp.dressiaType === targetCard.skill.condition.dressiaType) count++;
         }
         console.log(`type:210 count=${count}`);
-        if(count === cards1.length) {
+        if (count === cards1.length) {
           isConditionOk = true;
           isExistNewApplied = true;
         }
@@ -369,7 +391,7 @@ const calcSpecified = (
           if (!temp) continue;
           if (temp.rarity === targetCard.skill.condition.rarity || (targetCard.skill.condition.rarity === 'PR' && temp.rarity === 'SEC')) count++;
         }
-        if(count === cards1.length) {
+        if (count === cards1.length) {
           isConditionOk = true;
           isExistNewApplied = true;
         }
@@ -383,7 +405,7 @@ const calcSpecified = (
           if (!temp) continue;
           if (temp.cardName === targetCard.skill.condition.cardname) count++;
         }
-        if(count === cards1.length) {
+        if (count === cards1.length) {
           isConditionOk = true;
           isExistNewApplied = true;
         }
@@ -397,7 +419,7 @@ const calcSpecified = (
           if (!temp) continue;
           if (temp.cardName === targetCard.skill.condition.cardname && temp.rarity === targetCard.skill.condition.rarity) count++;
         }
-        if(count === cards1.length) {
+        if (count === cards1.length) {
           isConditionOk = true;
           isExistNewApplied = true;
         }
@@ -444,6 +466,12 @@ const calcSpecified = (
         isConditionOk = true;
         isExistNewApplied = true;
         break;
+      }
+      case 700: {
+        // タイプのドレシアタイプレベルがXより大きかったら
+        // 常時発動にしておく
+        isConditionOk = true;
+        isExistNewApplied = true;
       }
     }
 

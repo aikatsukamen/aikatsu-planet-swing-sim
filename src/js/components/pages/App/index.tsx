@@ -125,13 +125,13 @@ const App: React.FC<PropsType> = (props: PropsType) => {
     // レベルフィルタ
     if (filter.level) {
       switch (filter.levelCond) {
-        case 0:
+        case 0: // イコール
           newList = newList.filter((value) => value.level === filter.level);
           break;
-        case 1:
+        case 1: // 以上
           newList = newList.filter((value) => value.level >= filter.level);
           break;
-        case 2:
+        case 2: // 以下
           newList = newList.filter((value) => value.level <= filter.level);
           break;
       }
