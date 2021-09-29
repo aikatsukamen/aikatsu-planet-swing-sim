@@ -316,6 +316,30 @@ const calcSpecified = (
         }
         break;
       }
+      case 154: {
+        // あいてにレベルがXXより大きいドレシアがいたら
+        for (let j = 0; j < cards2.length; j++) {
+          const temp = cards2[j];
+          if (!temp) continue;
+          if (temp.level > targetCard.skill.condition.level) {
+            isConditionOk = true;
+            isExistNewApplied = true;
+          }
+        }
+        break;
+      }
+      case 155: {
+        // あいてにレベルがXXより小さいドレシアがいたら
+        for (let j = 0; j < cards2.length; j++) {
+          const temp = cards2[j];
+          if (!temp) continue;
+          if (temp.level < targetCard.skill.condition.level) {
+            isConditionOk = true;
+            isExistNewApplied = true;
+          }
+        }
+        break;
+      }
       case 200: {
         // 200: なかまにタイプがいたら
         for (let j = 0; j < cards1.length; j++) {
