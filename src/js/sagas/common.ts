@@ -477,6 +477,28 @@ const calcSpecified = (
         isExistNewApplied = true;
         break;
       }
+      case 402: {
+        // 402: スロット
+        // スロットの名前が、置いてる位置とあってなければ発動
+        enum battleEnum {
+          'オープニングバトル',
+          'メインバトル',
+          'クライマックスバトル',
+        }
+        const condPositionIndex = battleEnum[targetCard.skill.condition.slot];
+        if (condPositionIndex !== eneIndex) {
+          isConditionOk = true;
+          isExistNewApplied = true;
+        }
+        break;
+      }
+      case 403: {
+        // 403: 時刻
+        // 常時発動にしておく
+        isConditionOk = true;
+        isExistNewApplied = true;
+        break;
+      }
       case 500: {
         // イベント中だったら
         // 常時発動にしておく
@@ -493,6 +515,18 @@ const calcSpecified = (
       }
       case 700: {
         // タイプのドレシアタイプレベルがXより大きかったら
+        // 常時発動にしておく
+        isConditionOk = true;
+        isExistNewApplied = true;
+      }
+      case 800: {
+        // あいてよりアイカツランキングが高かったら
+        // 常時発動にしておく
+        isConditionOk = true;
+        isExistNewApplied = true;
+      }
+      case 801: {
+        // あいてよりアイカツランキングが低かったら
         // 常時発動にしておく
         isConditionOk = true;
         isExistNewApplied = true;
