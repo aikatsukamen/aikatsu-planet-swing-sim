@@ -110,7 +110,7 @@ const App: React.FC<PropsType> = (props: PropsType) => {
     for(const card of props.cardList) {
       if(!list.includes(card.versionId)) list.push(card.versionId);
     }
-    setVersionIdList(list);
+    setVersionIdList(list.sort());
   }, [props.cardList.length]);
 
   React.useEffect(() => {
