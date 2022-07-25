@@ -4,7 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../../actions';
 import { RootState } from '../../../reducers';
-import { calcEffectLevel } from '../../../sagas/common';
+import { calcEffectLevel, useDelayedEffect } from '../../../sagas/common';
 import Modal from '../../molecules/Modal';
 import Snackbar from '../../molecules/SnackBar';
 import Dialog from '../../organisms/Dialog';
@@ -91,6 +91,12 @@ const App: React.FC<PropsType> = (props: PropsType) => {
   // const [ally, setAlly] = React.useState<(string | null)[]>(['165599', '163835', '163817']);
   // const [enemy, setEnemy] = React.useState<(string | null)[]>(['163799', '163799', '163799']);
   const [cardList, setCardList] = React.useState<CardInfoList>([]);
+  const [versionIdList, setVersionIdList] = React.useState<string[]>([]);
+  const [selectCardVersion, setSelectCardVersion] = React.useState<string>("520001");
+  const changeVersion = (event: React.ChangeEvent<{ name: string; value: string}>) => {
+    setSelectCardVersion(event.target.value);
+  }
+
   const [filterOpen, setFilterOpen] = React.useState(false);
   const [favoriteOpen, setFavoriteOpen] = React.useState(false);
 
@@ -98,6 +104,14 @@ const App: React.FC<PropsType> = (props: PropsType) => {
   const addTempCard = (id: string) => () => {
     setTempCardList([...tempCardList, id]);
   };
+
+  React.useEffect(()=> {
+    const list: string[] = [];
+    for(const card of props.cardList) {
+      if(!list.includes(card.versionId)) list.push(card.versionId);
+    }
+    setVersionIdList(list);
+  }, [props.cardList.length]);
 
   React.useEffect(() => {
     if (props.allyCardList.length > 0) setAlly(props.allyCardList);
@@ -107,10 +121,17 @@ const App: React.FC<PropsType> = (props: PropsType) => {
   }, [props.enemyCardList.join()]);
 
   // フィルター
-  React.useEffect(() => {
+  useDelayedEffect(() => {
     let newList: typeof props.cardList = props.cardList;
     const filter = props.filter;
     console.log(props.filter);
+
+    // バージョン
+    if(selectCardVersion === "all") {
+      // これは全バージョン通す
+    } else {
+      newList = newList.filter((value)=> value.versionId === selectCardVersion);
+    }
 
     // 名前フィルタ
     if (filter.name) {
@@ -119,7 +140,13 @@ const App: React.FC<PropsType> = (props: PropsType) => {
 
     // ドレシアタイプフィルタ
     if (filter.dressiaType) {
-      newList = newList.filter((value) => value.dressiaType.includes(filter.dressiaType));
+      newList = newList.filter((value) => {
+        let isHit = false;
+        for(const type of value.dressiaType) {
+          if(type.includes(filter.dressiaType)) isHit = true;
+        }
+        return isHit;
+      });
     }
 
     // レベルフィルタ
@@ -183,7 +210,7 @@ const App: React.FC<PropsType> = (props: PropsType) => {
 
     setCardList(newList);
     setSelectCard('-');
-  }, [props.cardList.length, Object.values(props.filter).join()]);
+  }, [props.cardList.length, Object.values(props.filter).join(), selectCardVersion], 50);
 
   const [cardStatus, setCardStatus] = React.useState<{
     ally: {
@@ -288,7 +315,7 @@ const App: React.FC<PropsType> = (props: PropsType) => {
   const changeOp = (event: React.ChangeEvent<{ name?: string | undefined; value: string }>) => {
     setSelectCard(event.target.value);
   };
-  const tempSelect = (id: string) => setSelectCard(id);
+  // const tempSelect = (id: string) => setSelectCard(id);
 
   const setCardButton = (type: 'enemy' | 'ally', position: number) => () => {
     if (type === 'ally') {
@@ -376,6 +403,15 @@ const App: React.FC<PropsType> = (props: PropsType) => {
                     <ShareIcon />
                   </IconButton>
                 </Tooltip>
+
+                <Select defaultValue={"590001"} value={selectCardVersion} onChange={changeVersion} style={{width: 100}}>
+                  {versionIdList.map((val) => {
+                    return (
+                      <MenuItem key={val} value={val}>{val}</MenuItem>
+                    )
+                  })}
+                  <MenuItem key={"all"} value="all">all(重いかも)</MenuItem>
+                </Select>
               </div>
               <div style={{ display: 'flex', height: '2em' }}>
                 <Tooltip title="リストの絞り込み">
@@ -386,7 +422,7 @@ const App: React.FC<PropsType> = (props: PropsType) => {
                 <Select variant={'outlined'} onChange={changeOp} value={selectCard} fullWidth={true}>
                   <MenuItem value={'-'}> スイングを選んでね！ </MenuItem>
                   {cardList.map((card, index) => {
-                    return <MenuItem key={index} value={card.dressId}>{`${card.cardId} ${card.rarity} ${card.cardName} Lv.${card.level}`}</MenuItem>;
+                    return <MenuItem key={card.dressId} value={card.dressId}>{`${card.cardId} ${card.rarity} ${card.cardName} Lv.${card.level}`}</MenuItem>;
                   })}
                 </Select>
               </div>
@@ -469,6 +505,15 @@ const App: React.FC<PropsType> = (props: PropsType) => {
                     <ShareIcon />
                   </IconButton>
                 </Tooltip>
+
+                <Select defaultValue={"590001"} value={selectCardVersion} onChange={changeVersion} style={{width: 100}}>
+                  {versionIdList.map((val) => {
+                    return (
+                      <MenuItem key={val} value={val}>{val}</MenuItem>
+                    )
+                  })}
+                  <MenuItem key={"all"} value="all">all(重いかも)</MenuItem>
+                </Select>
               </div>
               <div style={{ display: 'flex', width: '100%', flexWrap: 'wrap', justifyContent: 'space-between', height: '100%', overflowY: 'scroll' }}>
                 {cardList.map((card) => {

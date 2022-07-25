@@ -1,3 +1,4 @@
+import React from 'react';
 import { CardInfo } from '../types/api';
 
 /**
@@ -50,6 +51,14 @@ export const postFile = async (url: string, file: File) => {
   }
 };
 
+export function useDelayedEffect(effect: React.EffectCallback, deps: React.DependencyList, timeout = 1000) {
+  React.useEffect(() => {
+    const timeoutId = setTimeout(effect, timeout);
+
+    return () => clearTimeout(timeoutId);
+  }, deps);
+}
+
 export const calcEffectLevel = (allyCards: (CardInfo | undefined)[], enemyCards: (CardInfo | undefined)[]) => {
   let data = {
     ally: [
@@ -100,6 +109,7 @@ export const calcEffectLevel = (allyCards: (CardInfo | undefined)[], enemyCards:
     ],
   };
 
+  // 基準となるレベルをセット
   for (let i = 0; i < enemyCards.length; i++) {
     const ene = enemyCards[i];
     if (ene) data.enemy[i].baseLevel = ene.level;
@@ -121,20 +131,24 @@ export const calcEffectLevel = (allyCards: (CardInfo | undefined)[], enemyCards:
     const result2 = calcSpecified(enemyCards, allyCards, 'enemy', data, appliedCard);
     isContinue = result1.isExistNewApplied || result2.isExistNewApplied;
   }
+  // ユニットの計算をする
+  calcUnit(allyCards, enemyCards, data);
 
   // 上限値でカットする
-  ['ally', 'enemy'].map((type) => {
+  const str: (keyof typeof data)[] = ["ally", 'enemy'];
+  str.map((type) => {
     for (let i = 0; i < data.ally.length; i++) {
       if (data[type][i].baseLevel > 0) {
         if (data[type][i].baseLevel + data[type][i].effectLevel > 15) {
           data[type][i].effectLevel = 15 - data[type][i].baseLevel;
         }
-        if (data[type][i].chanceBonus > 4) data[type][i].chanceBonus = 4;
-        if (data[type][i].scoreup > 3) data[type][i].scoreup = 3;
       }
+      if (data[type][i].chanceBonus > 4) data[type][i].chanceBonus = 4;
+      if (data[type][i].scoreup > 3) data[type][i].scoreup = 3;
     }
   });
 
+  console.log(data);
   return data;
 };
 
@@ -181,7 +195,7 @@ const calcSpecified = (
         // あいてのタイプがXXXだったら
         const temp = cards2[eneIndex];
         if (temp) {
-          if (temp.dressiaType === targetCard.skill.condition.dressiaType) {
+          if (temp.dressiaType.includes(targetCard.skill.condition.dressiaType)) {
             isConditionOk = true;
             isExistNewApplied = true;
           }
@@ -250,7 +264,7 @@ const calcSpecified = (
         // あいてのタイプがXXXではなかったら
         const temp = cards2[eneIndex];
         if (temp) {
-          if (temp.dressiaType !== targetCard.skill.condition.dressiaType) {
+          if (!temp.dressiaType.includes(targetCard.skill.condition.dressiaType)) {
             isConditionOk = true;
             isExistNewApplied = true;
           }
@@ -273,7 +287,7 @@ const calcSpecified = (
         for (let j = 0; j < cards2.length; j++) {
           const temp = cards2[j];
           if (!temp) continue;
-          if (temp.dressiaType === targetCard.skill.condition.dressiaType) {
+          if (temp.dressiaType.includes(targetCard.skill.condition.dressiaType)) {
             isConditionOk = true;
             isExistNewApplied = true;
           }
@@ -346,7 +360,7 @@ const calcSpecified = (
           if (eneIndex === j) continue;
           const temp = cards1[j];
           if (!temp) continue;
-          if (temp.dressiaType === targetCard.skill.condition.dressiaType) {
+          if (temp.dressiaType.includes(targetCard.skill.condition.dressiaType)) {
             isConditionOk = true;
             isExistNewApplied = true;
           }
@@ -398,7 +412,7 @@ const calcSpecified = (
         for (let j = 0; j < cards1.length; j++) {
           const temp = cards1[j];
           if (!temp) continue;
-          if (temp.dressiaType === targetCard.skill.condition.dressiaType) count++;
+          if (temp.dressiaType.includes(targetCard.skill.condition.dressiaType)) count++;
         }
         console.log(`type:210 count=${count}`);
         if (count === cards1.length) {
@@ -506,6 +520,13 @@ const calcSpecified = (
         isExistNewApplied = true;
         break;
       }
+      case 501: {
+        // ユニットモードだったら
+        // 常時発動にしておく
+        isConditionOk = true;
+        isExistNewApplied = true;
+        break;
+      }
       case 600: {
         // xxxがパーフェクトを10回以上とれたら
         // 常時発動にしておく
@@ -515,6 +536,18 @@ const calcSpecified = (
       }
       case 700: {
         // タイプのドレシアタイプレベルがXより大きかったら
+        // 常時発動にしておく
+        isConditionOk = true;
+        isExistNewApplied = true;
+      }
+      case 701: {
+        // タイプのドレシアタイプレベルがXより小さかったら
+        // 常時発動にしておく
+        isConditionOk = true;
+        isExistNewApplied = true;
+      }
+      case 702: {
+        // タイプのドレシアタイプレベルがMAXだったら
         // 常時発動にしておく
         isConditionOk = true;
         isExistNewApplied = true;
@@ -531,6 +564,86 @@ const calcSpecified = (
         isConditionOk = true;
         isExistNewApplied = true;
       }
+      case 900: {
+        // ぜんいんのドレシアタイプがあわせてXタイプより多かったら
+        let count = 0;
+        const typeList:string[] = [];
+        for(const card of cards1) {
+          if(card) {
+            for(const type of card.dressiaType) {
+              if(!typeList.includes(type)) {
+                count++;
+                typeList.push(type);
+              }  
+            }
+          }
+        }
+        if(targetCard.skill.condition.typeKind < count) {
+          isConditionOk = true;
+          isExistNewApplied = true;
+        }
+        break;
+      }
+      case 901: {
+        // ぜんいんのドレシアタイプがあわせてXタイプより少なかったら
+        let count = 0;
+        const typeList:string[] = [];
+        for(const card of cards1) {
+          if(card) {
+            for(const type of card.dressiaType) {
+              if(!typeList.includes(type)) {
+                count++;
+                typeList.push(type);
+              }  
+            }
+          }
+        }
+        if(targetCard.skill.condition.typeKind > count) {
+          isConditionOk = true;
+          isExistNewApplied = true;
+        }
+        break;
+      }
+      case 902: {
+        // あいてぜんいんのドレシアタイプがあわせてXタイプより多かったら
+        let count = 0;
+        const typeList:string[] = [];
+        for(const card of cards2) {
+          if(card) {
+            for(const type of card.dressiaType) {
+              if(!typeList.includes(type)) {
+                count++;
+                typeList.push(type);
+              }  
+            }
+          }
+        }
+        if(targetCard.skill.condition.typeKind < count) {
+          isConditionOk = true;
+          isExistNewApplied = true;
+        }
+        break;
+      }
+      case 903: {
+        // あいてぜんいんのドレシアタイプがあわせてXタイプより少なかったら
+        let count = 0;
+        const typeList:string[] = [];
+        for(const card of cards2) {
+          if(card) {
+            for(const type of card.dressiaType) {
+              if(!typeList.includes(type)) {
+                count++;
+                typeList.push(type);
+              }  
+            }
+          }
+        }
+        if(targetCard.skill.condition.typeKind > count) {
+          isConditionOk = true;
+          isExistNewApplied = true;
+        }
+        break;
+      }
     }
 
     // 条件が存在しない場合は、無条件で発動
@@ -544,8 +657,8 @@ const calcSpecified = (
 
     // 効果を発揮
     switch (targetCard.skill.effect.target.type) {
+      // じぶん
       case 0: {
-        // じぶん
         switch (targetCard.skill.effect.type) {
           case 0: {
             effectedData[type][eneIndex].effectLevel += targetCard.skill.effect.level;
@@ -566,6 +679,7 @@ const calcSpecified = (
         }
         break;
       }
+      // なかま
       case 1: {
         // なかま
         for (let j = 0; j < cards1.length; j++) {
@@ -602,8 +716,8 @@ const calcSpecified = (
         }
         break;
       }
+      // ぜんいん
       case 2: {
-        // ぜんいん
         for (let j = 0; j < cards1.length; j++) {
           // パフェ回数をとったやつ
           if (targetCard.skill.condition.value === 600) {
@@ -636,6 +750,7 @@ const calcSpecified = (
         }
         break;
       }
+      // オープニング
       case 3: {
         // パフェ回数をとったやつ
         if (targetCard.skill.condition.value === 600) {
@@ -647,7 +762,6 @@ const calcSpecified = (
           }
         }
 
-        // オープニング
         switch (targetCard.skill.effect.type) {
           case 0: {
             effectedData[type][0].effectLevel += targetCard.skill.effect.level;
@@ -668,6 +782,7 @@ const calcSpecified = (
         }
         break;
       }
+      // メイン
       case 4: {
         // パフェ回数をとったやつ
         if (targetCard.skill.condition.value === 600) {
@@ -679,7 +794,6 @@ const calcSpecified = (
           }
         }
 
-        // メイン
         switch (targetCard.skill.effect.type) {
           case 0: {
             effectedData[type][1].effectLevel += targetCard.skill.effect.level;
@@ -700,8 +814,8 @@ const calcSpecified = (
         }
         break;
       }
+      // クライマックス
       case 5: {
-        // クライマックス
         switch (targetCard.skill.effect.type) {
           case 0: {
             effectedData[type][2].effectLevel += targetCard.skill.effect.level;
@@ -722,7 +836,362 @@ const calcSpecified = (
         }
         break;
       }
-      case 6: {
+      // あいて
+      case 7: {
+        switch (targetCard.skill.effect.type) {
+          case 0: {
+            effectedData[targetType][eneIndex].effectLevel += targetCard.skill.effect.level;
+            break;
+          }
+          case 1: {
+            effectedData[targetType][eneIndex].scoreup += targetCard.skill.effect.scoreup;
+            break;
+          }
+          case 2: {
+            effectedData[targetType][eneIndex].chanceBonus += targetCard.skill.effect.chancebonus;
+            break;
+          }
+          case 3: {
+            effectedData[targetType][eneIndex].judgeSupportPerfect += targetCard.skill.effect.judgeSupportPerfect;
+            break;
+          }
+        }
+        break;
+      }
+      // あいてのなかま
+      case 7: {
+        for (let j = 0; j < cards1.length; j++) {
+          if (j === eneIndex) continue; // じぶんは除外
+
+          // // パフェ回数をとったやつ
+          // if (targetCard.skill.condition.value === 600) {
+          //   switch (targetCard.skill.condition.notesAchieve) {
+          //     case 'あいて': {
+          //       // じぶんより前の位置には適用しない
+          //       if (j < eneIndex) continue;
+          //     }
+          //   }
+          // }
+
+          switch (targetCard.skill.effect.type) {
+            case 0: {
+              effectedData[targetType][j].effectLevel += targetCard.skill.effect.level;
+              break;
+            }
+            case 1: {
+              effectedData[targetType][j].scoreup += targetCard.skill.effect.scoreup;
+              break;
+            }
+            case 2: {
+              effectedData[targetType][j].chanceBonus += targetCard.skill.effect.chancebonus;
+              break;
+            }
+            case 3: {
+              effectedData[targetType][j].judgeSupportPerfect += targetCard.skill.effect.judgeSupportPerfect;
+              break;
+            }
+          }
+        }
+        break;
+      }
+      // ぜんいん
+      case 8: {
+        for (let j = 0; j < cards1.length; j++) {
+          // // パフェ回数をとったやつ
+          // if (targetCard.skill.condition.value === 600) {
+          //   switch (targetCard.skill.condition.notesAchieve) {
+          //     case 'じぶん': {
+          //       // じぶんより前の位置には適用しない
+          //       if (j < eneIndex) continue;
+          //     }
+          //   }
+          // }
+
+          switch (targetCard.skill.effect.type) {
+            case 0: {
+              effectedData[targetType][j].effectLevel += targetCard.skill.effect.level;
+              break;
+            }
+            case 1: {
+              effectedData[targetType][j].scoreup += targetCard.skill.effect.scoreup;
+              break;
+            }
+            case 2: {
+              effectedData[targetType][j].chanceBonus += targetCard.skill.effect.chancebonus;
+              break;
+            }
+            case 3: {
+              effectedData[targetType][j].judgeSupportPerfect += targetCard.skill.effect.judgeSupportPerfect;
+              break;
+            }
+          }
+        }
+        break;
+      }
+
+      // じぶんもあいても
+      case 9: {
+        switch (targetCard.skill.effect.type) {
+          case 0: {
+            effectedData[type][eneIndex].effectLevel += targetCard.skill.effect.level;
+            break;
+          }
+          case 1: {
+            effectedData[type][eneIndex].scoreup += targetCard.skill.effect.scoreup;
+            break;
+          }
+          case 2: {
+            effectedData[type][eneIndex].chanceBonus += targetCard.skill.effect.chancebonus;
+            break;
+          }
+          case 3: {
+            effectedData[type][eneIndex].judgeSupportPerfect += targetCard.skill.effect.judgeSupportPerfect;
+            break;
+          }
+        }
+
+        switch (targetCard.skill.effect.type) {
+          case 0: {
+            effectedData[targetType][eneIndex].effectLevel += targetCard.skill.effect.level;
+            break;
+          }
+          case 1: {
+            effectedData[targetType][eneIndex].scoreup += targetCard.skill.effect.scoreup;
+            break;
+          }
+          case 2: {
+            effectedData[targetType][eneIndex].chanceBonus += targetCard.skill.effect.chancebonus;
+            break;
+          }
+          case 3: {
+            effectedData[targetType][eneIndex].judgeSupportPerfect += targetCard.skill.effect.judgeSupportPerfect;
+            break;
+          }
+        }
+        break;
+      }
+
+      // じぶんもあいてもなかま
+      case 10: {
+        for (let j = 0; j < cards1.length; j++) {
+          if (j === eneIndex) continue; // じぶんは除外
+
+          switch (targetCard.skill.effect.type) {
+            case 0: {
+              effectedData[type][j].effectLevel += targetCard.skill.effect.level;
+              break;
+            }
+            case 1: {
+              effectedData[type][j].scoreup += targetCard.skill.effect.scoreup;
+              break;
+            }
+            case 2: {
+              effectedData[type][j].chanceBonus += targetCard.skill.effect.chancebonus;
+              break;
+            }
+            case 3: {
+              effectedData[type][j].judgeSupportPerfect += targetCard.skill.effect.judgeSupportPerfect;
+              break;
+            }
+          }
+        }
+
+        for (let j = 0; j < cards1.length; j++) {
+          if (j === eneIndex) continue; // じぶんは除外
+
+          switch (targetCard.skill.effect.type) {
+            case 0: {
+              effectedData[targetType][j].effectLevel += targetCard.skill.effect.level;
+              break;
+            }
+            case 1: {
+              effectedData[targetType][j].scoreup += targetCard.skill.effect.scoreup;
+              break;
+            }
+            case 2: {
+              effectedData[targetType][j].chanceBonus += targetCard.skill.effect.chancebonus;
+              break;
+            }
+            case 3: {
+              effectedData[targetType][j].judgeSupportPerfect += targetCard.skill.effect.judgeSupportPerfect;
+              break;
+            }
+          }
+        }
+        break;
+      }
+
+      // じぶんもあいてもぜんいん
+      case 11: {
+        for (let j = 0; j < cards1.length; j++) {
+          switch (targetCard.skill.effect.type) {
+            case 0: {
+              effectedData[type][j].effectLevel += targetCard.skill.effect.level;
+              break;
+            }
+            case 1: {
+              effectedData[type][j].scoreup += targetCard.skill.effect.scoreup;
+              break;
+            }
+            case 2: {
+              effectedData[type][j].chanceBonus += targetCard.skill.effect.chancebonus;
+              break;
+            }
+            case 3: {
+              effectedData[type][j].judgeSupportPerfect += targetCard.skill.effect.judgeSupportPerfect;
+              break;
+            }
+          }
+        }
+
+        for (let j = 0; j < cards1.length; j++) {
+          switch (targetCard.skill.effect.type) {
+            case 0: {
+              effectedData[targetType][j].effectLevel += targetCard.skill.effect.level;
+              break;
+            }
+            case 1: {
+              effectedData[targetType][j].scoreup += targetCard.skill.effect.scoreup;
+              break;
+            }
+            case 2: {
+              effectedData[targetType][j].chanceBonus += targetCard.skill.effect.chancebonus;
+              break;
+            }
+            case 3: {
+              effectedData[targetType][j].judgeSupportPerfect += targetCard.skill.effect.judgeSupportPerfect;
+              break;
+            }
+          }
+        }
+        break;
+      }
+
+      // じぶんもあいてもオープニング
+      case 12: {
+        switch (targetCard.skill.effect.type) {
+          case 0: {
+            effectedData[type][0].effectLevel += targetCard.skill.effect.level;
+            break;
+          }
+          case 1: {
+            effectedData[type][0].scoreup += targetCard.skill.effect.scoreup;
+            break;
+          }
+          case 2: {
+            effectedData[type][0].chanceBonus += targetCard.skill.effect.chancebonus;
+            break;
+          }
+          case 3: {
+            effectedData[type][0].judgeSupportPerfect += targetCard.skill.effect.judgeSupportPerfect;
+            break;
+          }
+        }
+
+        switch (targetCard.skill.effect.type) {
+          case 0: {
+            effectedData[targetType][0].effectLevel += targetCard.skill.effect.level;
+            break;
+          }
+          case 1: {
+            effectedData[targetType][0].scoreup += targetCard.skill.effect.scoreup;
+            break;
+          }
+          case 2: {
+            effectedData[targetType][0].chanceBonus += targetCard.skill.effect.chancebonus;
+            break;
+          }
+          case 3: {
+            effectedData[targetType][0].judgeSupportPerfect += targetCard.skill.effect.judgeSupportPerfect;
+            break;
+          }
+        }
+        break;
+      }
+      // じぶんもあいてもメイン
+      case 13: {
+        switch (targetCard.skill.effect.type) {
+          case 0: {
+            effectedData[type][1].effectLevel += targetCard.skill.effect.level;
+            break;
+          }
+          case 1: {
+            effectedData[type][1].scoreup += targetCard.skill.effect.scoreup;
+            break;
+          }
+          case 2: {
+            effectedData[type][1].chanceBonus += targetCard.skill.effect.chancebonus;
+            break;
+          }
+          case 3: {
+            effectedData[type][1].judgeSupportPerfect += targetCard.skill.effect.judgeSupportPerfect;
+            break;
+          }
+        }
+
+        switch (targetCard.skill.effect.type) {
+          case 0: {
+            effectedData[targetType][1].effectLevel += targetCard.skill.effect.level;
+            break;
+          }
+          case 1: {
+            effectedData[targetType][1].scoreup += targetCard.skill.effect.scoreup;
+            break;
+          }
+          case 2: {
+            effectedData[targetType][1].chanceBonus += targetCard.skill.effect.chancebonus;
+            break;
+          }
+          case 3: {
+            effectedData[targetType][1].judgeSupportPerfect += targetCard.skill.effect.judgeSupportPerfect;
+            break;
+          }
+        }
+        break;
+      }
+      // じぶんもあいてもクライマックス
+      case 14: {
+        switch (targetCard.skill.effect.type) {
+          case 0: {
+            effectedData[type][2].effectLevel += targetCard.skill.effect.level;
+            break;
+          }
+          case 1: {
+            effectedData[type][2].scoreup += targetCard.skill.effect.scoreup;
+            break;
+          }
+          case 2: {
+            effectedData[type][2].chanceBonus += targetCard.skill.effect.chancebonus;
+            break;
+          }
+          case 3: {
+            effectedData[type][2].judgeSupportPerfect += targetCard.skill.effect.judgeSupportPerfect;
+            break;
+          }
+        }
+
+        switch (targetCard.skill.effect.type) {
+          case 0: {
+            effectedData[targetType][2].effectLevel += targetCard.skill.effect.level;
+            break;
+          }
+          case 1: {
+            effectedData[targetType][2].scoreup += targetCard.skill.effect.scoreup;
+            break;
+          }
+          case 2: {
+            effectedData[targetType][2].chanceBonus += targetCard.skill.effect.chancebonus;
+            break;
+          }
+          case 3: {
+            effectedData[targetType][2].judgeSupportPerfect += targetCard.skill.effect.judgeSupportPerfect;
+            break;
+          }
+        }
+        break;
+      }
+
+      case 100: {
         // ドレシアタイプ
         for (let j = 0; j < cards1.length; j++) {
           // パフェ回数をとったやつ
@@ -737,7 +1206,7 @@ const calcSpecified = (
 
           const target = cards1[j];
           if (!target) continue;
-          if (target.dressiaType !== targetCard.skill.effect.target.dressiaType) continue;
+          if (!target.dressiaType.includes(targetCard.skill.effect.target.dressiaType)) continue;
           switch (targetCard.skill.effect.type) {
             case 0: {
               effectedData[type][j].effectLevel += targetCard.skill.effect.level;
@@ -759,7 +1228,7 @@ const calcSpecified = (
         }
         break;
       }
-      case 7: {
+      case 101: {
         // レアリティ
         for (let j = 0; j < cards1.length; j++) {
           // パフェ回数をとったやつ
@@ -805,3 +1274,17 @@ const calcSpecified = (
     isExistNewApplied,
   };
 };
+
+/** ユニットが一緒ならレベルを＋1する */
+const calcUnit = (cards1: (CardInfo | undefined)[], cards2: (CardInfo | undefined)[], data: ReturnType<typeof calcEffectLevel>) => {
+  for(let i = 0; i < cards1.length; i++) {
+    const c1 = cards1[i];
+    const c2 = cards2[i];
+    if(!c1 || !c2) continue;
+
+    if(c1.unitName === c2.unitName) {
+      data.ally[i].effectLevel++;
+      data.enemy[i].effectLevel++;
+    }
+  }
+}
